@@ -86,3 +86,5 @@ This boilerplate is made for creating chrome extensions using React and Typescri
 ---
 
 [Jonghakseo](https://nookpi.tistory.com/)
+
+color pallet (https://coolors.co/palette/ffbe0b-fb5607-ff006e-8338ec-3a86ff)
