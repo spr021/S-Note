@@ -1,14 +1,15 @@
 {
   "name": "s-note",
   "version": "0.1.0",
-  "description": "S Note everywhere you want",
+  "description": "Take page notes, save highlights, and attach comments to text on the web",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/spr021/S-Note.git"
   },
   "scripts": {
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && npm run build:bundles && node utils/verify-extension-build.mjs && node utils/verify-content-runtime.mjs",
+    "build:bundles": "vite build && vite build --config vite.content.config.ts",
     "build:hmr": "rollup --config utils/reload/rollup.config.ts",
     "wss": "node utils/reload/initReloadServer.js",
     "dev": "npm run build:hmr && (run-p wss dev:nodemon)",
@@ -23,7 +24,7 @@
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.5.0",
     "@testing-library/react": "13.4.0",
-    "@types/chrome": "0.0.197",
+    "@types/chrome": "0.0.210",
     "@types/jest": "29.0.3",
     "@types/node": "18.7.23",
     "@types/react": "18.0.21",

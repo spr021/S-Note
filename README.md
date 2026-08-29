@@ -1,90 +1,93 @@
-<div align="center">
-<img src="public/icon-128.png" alt="logo"/>
-<h1> Chrome Extension Boilerplate with<br/>React + Vite + TypeScript</h1>
+# S Note
 
-![](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
-![](https://img.shields.io/badge/Typescript-3178C6?style=flat-square&logo=typescript&logoColor=white)
-![](https://badges.aleen42.com/src/vitejs.svg)
-![GitHub action badge](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite/actions/workflows/build.yml/badge.svg)
-<img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://github.com/Jonghakseo/chrome-extension-boilerplate-react-viteFactions&count_bg=%23#222222&title_bg=%23#454545&title=😀&edge_flat=true" alt="hits"/>
+S Note is a local-first Chrome extension that adds a saved annotation layer on top of every website. Each page gets its own independent canvas for notes, highlights, comments, sticky marks, and freehand drawing.
 
+## Features
 
-> This project is listed in the [Awesome Vite](https://github.com/vitejs/awesome-vite)
+- Plain notes linked to the current page
+- A toggleable annotation layer that does not modify the website's saved source
+- A locked note-taking mode where website links, buttons, forms, and shortcuts cannot run
+- Select-text, highlight, comment, sticky-mark, pen, and erase tools
+- Persistent yellow, green, blue, and pink text highlights
+- Google Docs-style comments anchored to selected website text
+- Distinct underlined comments with an inline comment badge
+- Draggable sticky notes positioned anywhere on a page
+- Scroll-aware freehand pen strokes
+- Undo and keyboard tool shortcuts
+- Automatic annotation restoration when a page is revisited
+- Quote-and-context fallback when a website's DOM structure changes
+- Current-page and all-notes views in the extension popup
+- Website groups in All notes with one-click bulk deletion
+- A minimizable annotation toolbar that keeps the layer active
+- Edit, delete, and “show on page” controls
+- Selection toolbar and right-click context-menu actions
+- Data stored only in `chrome.storage.local`
 
-</div>
+## Run locally
 
-## Table of Contents
+Requirements: Node.js 16 or newer and Yarn 1.x.
 
-- [Intro](#intro)
-- [Features](#features)
-- [Installation](#installation)
-  - [Procedures](#procedures)
-- [Screenshots](#screenshots)
-  - [NewTab](#newtab)
-  - [Popup](#popup)  
-- [Documents](#documents)
+```sh
+yarn install --frozen-lockfile
+yarn build
+```
 
+Then open `chrome://extensions`, enable **Developer mode**, choose **Load unpacked**, and select this repository's `dist` directory.
 
-## Intro <a name="intro"></a>
-This boilerplate is made for creating chrome extensions using React and Typescript.
-> The focus was on improving the build speed and development experience with Vite.
+After every rebuild, click **Reload** on the S Note card in
+`chrome://extensions`, then refresh any website tab that was already open.
+Chrome does not inject an updated content script into existing tabs
+automatically. The floating **S** is available on normal `http` and `https`
+pages, not Chrome-internal pages such as `chrome://extensions`, the New Tab
+page, or the Chrome Web Store.
 
-## Features <a name="features"></a>
-- [React 18](https://reactjs.org/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Jest](https://jestjs.io/)
-- [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
-- [Vite](https://vitejs.dev/)
-- [SASS](https://sass-lang.com/)
-- [ESLint](https://eslint.org/)
-- [Prettier](https://prettier.io/)
-- [Chrome Extension Manifest Version 3](https://developer.chrome.com/docs/extensions/mv3/intro/)
-- [HMR(incomplete)](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite/pull/25)
+For development with rebuild/reload support:
 
-## Installation <a name="installation"></a>
+```sh
+yarn dev
+```
 
-### Procedures <a name="procedures"></a>
-1. Clone this repository.
-2. Change `name` and `description` in package.json => **Auto synchronize with manifest** 
-3. Run `yarn` or `npm i` (check your node version >= 16)
-4. Run `yarn dev` or `npm run dev`
-5. Load Extension on Chrome
-   1. Open - Chrome browser
-   2. Access - chrome://extensions
-   3. Check - Developer mode
-   4. Find - Load unpacked extension
-   5. Select - `dist` folder in this project (after dev or build)
-6. If you want to build in production, Just run `yarn build` or `npm run build`.
+## Use S Note
 
-## Screenshots <a name="screenshots"></a>
+1. Open any normal `http` or `https` page.
+2. Click the floating **S** button on the page, or choose **Unhide notes** in the extension popup.
+3. While notes are unhidden, the website is locked: its links, buttons, forms, and keyboard actions cannot run. Scrolling, selecting text, and the right-click menu remain available for annotation work.
+4. Choose a tool from the layer toolbar:
+   - **Select text (V)** lets you select a passage and then choose highlight or comment from the small selection toolbar.
+   - **Highlight (H)** highlights the next text selection using the active color.
+   - **Comment (C)** attaches a comment to the next text selection.
+   - **Sticky mark (M)** places a note wherever you click. Drag its top handle to move it.
+   - **Pen (D)** draws freehand strokes over the page.
+   - **Erase (E)** removes the annotation you click.
+5. Use the four color buttons for highlights, comments, marks, and pen strokes. Use **Undo** to remove the newest annotation. Every finished action saves automatically.
+6. Click the floating **S**, the toolbar's **×**, or **Hide notes** in the popup. Every annotation disappears and the website becomes fully interactive again.
+7. Unhide notes later to restore only the annotations saved for that exact page URL. Use the popup to browse this page's annotations or all saved annotations.
 
-### New Tab <a name="newtab"></a>
+You can also right-click selected text to highlight or comment directly, or right-click a page to unhide notes and choose sticky, pen, or erase mode.
 
-<img width="971" src="https://user-images.githubusercontent.com/53500778/162631646-cd40976b-b737-43d0-8e6a-6ac090a2e2d4.png">
+## Development checks
 
-### Popup <a name="popup"></a>
+```sh
+yarn test --runInBand
+yarn build
+```
 
-<img width="314" alt="popup" src="https://user-images.githubusercontent.com/53500778/203561728-23517d46-12e3-4139-8a4f-e0b2f22a6ab3.png">
+The tests cover storage CRUD, strict per-website separation, URL normalization, text-anchor restoration, multi-element highlighting, layer activation, comments, draggable sticky marks, freehand drawing, erasing, popup tool launching, and page-note capture.
 
+## Architecture
 
-## Documents <a name="documents"></a>
-- [Vite Plugin](https://vitejs.dev/guide/api-plugin.html)
-- [ChromeExtension](https://developer.chrome.com/docs/extensions/mv3/)
-- [Rollup](https://rollupjs.org/guide/en/)
-- [Rollup-plugin-chrome-extension](https://www.extend-chrome.dev/rollup-plugin)
+- `src/shared/notes.ts` — data model and `chrome.storage.local` persistence
+- `src/pages/content/anchors.ts` — range serialization, quote fallback, and safe DOM wrapping
+- `src/pages/content/app.ts` — the website layer, toolbar modes, spatial annotations, text annotations, restoration, and messaging
+- `src/pages/popup/Popup.tsx` — layer launcher, page-note capture, and saved-annotation library
+- `src/pages/background/index.ts` — layer and selection context menus
 
+Text annotations store a DOM path for fast restoration and the selected quote with surrounding text as a resilient fallback. Sticky marks and drawings store document coordinates and are redrawn relative to the current scroll position. Sites that completely rewrite selected words or radically reflow their dimensions can make an old annotation less precise; the saved annotation remains available in **All notes**.
 
+## Privacy
 
----
-## Thanks To
+S Note does not send notes or browsing content to a server. Notes remain in Chrome's local extension storage for the current browser profile. Removing the extension may remove that local data, depending on Chrome's extension-data handling.
 
-| [Jetbrains](https://jb.gg/OpenSourceSupport)                                                                           | [Jackson Hong](https://www.linkedin.com/in/j-acks0n/)                                            |
-|--------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| <img width="100" src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" alt="JetBrains Logo (Main) logo."> | <img width="100" src='https://avatars.githubusercontent.com/u/23139754?v=4' alt='Jackson Hong'/> |
+## License
 
-
----
-
-[Jonghakseo](https://nookpi.tistory.com/)
-
-color pallet (https://coolors.co/palette/ffbe0b-fb5607-ff006e-8338ec-3a86ff)
+MIT

@@ -1,7 +1,5 @@
-console.log("content loaded");
+import { startSNote } from "./app";
 
-/**
- * @description
- * Chrome extensions don't support modules in content scripts.
- */
-import("./components/Demo");
+void startSNote().catch((error) => {
+  console.error("S Note could not start on this page.", error);
+});

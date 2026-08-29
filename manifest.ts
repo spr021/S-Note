@@ -5,11 +5,18 @@ const manifest: chrome.runtime.ManifestV3 = {
   name: packageJson.name,
   version: packageJson.version,
   description: packageJson.description,
-  options_page: "src/pages/options/index.html",
-  background: { service_worker: "src/pages/background/index.js" },
+  background: {
+    service_worker: "src/pages/background/index.js",
+    type: "module",
+  },
   action: {
     default_popup: "src/pages/popup/index.html",
-    default_icon: "icons/sticky-note-64.png",
+    default_icon: {
+      "16": "icons/sticky-note-16.png",
+      "24": "icons/sticky-note-24.png",
+      "32": "icons/sticky-note-32.png",
+      "48": "icons/sticky-note-48.png",
+    },
   },
   icons: {
     "16": "icons/sticky-note-16.png",
@@ -23,22 +30,27 @@ const manifest: chrome.runtime.ManifestV3 = {
   },
   content_scripts: [
     {
-      matches: ["http://*/*", "https://*/*", "<all_urls>"],
+      matches: ["http://*/*", "https://*/*"],
       js: ["src/pages/content/index.js"],
       css: ["assets/css/contentStyle.chunk.css"],
+      run_at: "document_idle",
     },
   ],
-  devtools_page: "src/pages/devtools/index.html",
   web_accessible_resources: [
     {
-      resources: [
-        "assets/js/*.js",
-        "assets/css/*.css",
-        "icons/*",
-      ],
+      resources: ["assets/js/*.js", "assets/css/*.css", "icons/*"],
       matches: ["*://*/*"],
     },
   ],
+  permissions: ["activeTab", "contextMenus", "scripting", "storage"],
+  commands: {
+    _execute_action: {
+      suggested_key: {
+        default: "Ctrl+B",
+        mac: "Command+B",
+      },
+    },
+  },
 };
 
 export default manifest;
