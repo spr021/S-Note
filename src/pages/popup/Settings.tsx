@@ -63,11 +63,11 @@ const SettingsPanel = ({
         <strong>Support S Note</strong>
         <span>
           S Note is free and keeps your notes on your device. If it helps you,
-          you can buy me a coffee.
+          you can leave an optional tip — it goes to the developer, not Google.
         </span>
       </div>
       <button type="button" className="support-button" onClick={onSupport}>
-        ☕ Buy me a coffee
+        <span aria-hidden="true">☕</span> Buy me a coffee
       </button>
     </div>
   </section>

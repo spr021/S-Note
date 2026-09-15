@@ -564,15 +564,17 @@ const Popup = () => {
         </>
       )}
 
-      <footer className="support-footer">
-        <button
-          type="button"
-          className="support-link"
-          onClick={() => openSupportPage()}
-        >
-          ☕ Buy me a coffee
-        </button>
-      </footer>
+      {view !== "settings" && (
+        <footer className="support-footer">
+          <button
+            type="button"
+            className="support-link"
+            onClick={() => void openSupportPage()}
+          >
+            <span aria-hidden="true">☕</span> Buy me a coffee
+          </button>
+        </footer>
+      )}
     </main>
   );
 };

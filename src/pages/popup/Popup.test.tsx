@@ -14,7 +14,9 @@ describe("S Note popup", () => {
   test("saves and renders a page note for the active website", async () => {
     const values: Record<string, unknown> = {};
     const messages: unknown[] = [];
-    const createTab = jest.fn();
+    const createTab = jest.fn((_properties: unknown, callback?: () => void) =>
+      callback?.()
+    );
     const listeners: Array<
       (
         changes: Record<string, chrome.storage.StorageChange>,
@@ -94,6 +96,16 @@ describe("S Note popup", () => {
     render(<Popup />);
     await screen.findByText("Example article");
     expect(messages).toContainEqual({ type: "SNOTE_GET_LAYER_STATE" });
+
+    const footerSupport = screen.getByRole("button", {
+      name: "Buy me a coffee",
+    });
+    expect(footerSupport.className).toContain("support-link");
+    fireEvent.click(footerSupport);
+    expect(createTab).toHaveBeenCalledWith(
+      { url: SUPPORT_URL },
+      expect.any(Function)
+    );
 
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: "Unhide notes" }));
@@ -184,12 +196,11 @@ describe("S Note popup", () => {
     );
     expect(document.documentElement.dataset.theme).toBe("light");
 
-    const supportButtons = screen.getAllByRole("button", {
-      name: /buy me a coffee/i,
+    const cardSupport = screen.getByRole("button", {
+      name: "Buy me a coffee",
     });
-    expect(supportButtons).toHaveLength(2);
-    fireEvent.click(supportButtons[0]);
-    expect(createTab).toHaveBeenCalledWith({ url: SUPPORT_URL });
+    expect(cardSupport.className).toContain("support-button");
+    expect(document.querySelector(".support-footer")).toBeNull();
   });
 
   test("surfaces a storage failure instead of hanging on loading", async () => {
@@ -236,5 +247,8 @@ describe("S Note popup", () => {
 
     expect(await screen.findByText("storage unavailable")).not.toBeNull();
     expect(screen.queryByText("Loading notes…")).toBeNull();
+    expect(
+      screen.getByRole("button", { name: "Buy me a coffee" })
+    ).not.toBeNull();
   });
 });
