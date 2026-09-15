@@ -1,6 +1,6 @@
 {
   "name": "s-note",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Take page notes, save highlights, and attach comments to text on the web",
   "license": "MIT",
   "repository": {
@@ -11,6 +11,9 @@
     "build": "tsc --noEmit && npm run build:bundles && node utils/verify-extension-build.mjs && node utils/verify-content-runtime.mjs",
     "build:bundles": "vite build && vite build --config vite.content.config.ts",
     "build:hmr": "rollup --config utils/reload/rollup.config.ts",
+    "build:release": "yarn build && yarn package:extensions",
+    "package:extensions": "node utils/package-extension.mjs",
+    "lint:firefox": "npx --yes web-ext lint --source-dir release/firefox",
     "wss": "node utils/reload/initReloadServer.js",
     "dev": "npm run build:hmr && (run-p wss dev:nodemon)",
     "dev:nodemon": "nodemon",

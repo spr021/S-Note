@@ -7,6 +7,9 @@
 # build
 /dist
 
+# release packages
+/release
+
 # etc
 .DS_Store
 .env.local
