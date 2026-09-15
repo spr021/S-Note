@@ -145,18 +145,17 @@ help text if unsure.
 
 ---
 
-## 6. Screenshots you must capture
+## 6. Screenshots
 
-Chrome accepts `1280×800` or `640×400` PNG/JPEG, 1–5 images. Suggested set
-(see `store/listing.md` for the full shot list):
+Chrome accepts `1280×800` or `640×400` PNG/JPEG, 1–5 images. Three are already
+in the repo and are the correct size — upload them in this order:
 
-1. Popup open on a normal article page ("This page" view).
-2. Floating S button + annotation toolbar on a page.
-3. Highlights, a comment, and a sticky mark on a page.
-4. The pen tool drawing.
-5. Settings tab (toggles + support card).
+1. `store/Banner1.png` (1280×800)
+2. `store/Banner2.png` (1280×800)
+3. `store/Banner3.png` (1280×800)
 
-Capture tips: use a clean page (e.g. Wikipedia), 100% zoom, and crop to
+Optional extras if you want up to five: the Settings tab (toggles + support
+card) and the pen tool in action. Use a clean page at 100% zoom and crop to
 1280×800 so nothing is letterboxed.
 
 ---

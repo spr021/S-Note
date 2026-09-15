@@ -65,16 +65,17 @@ details.
 S Note is free. If it helps you, you can buy the developer a coffee from the
 extension's Settings tab. Tips are optional.
 
-## Screenshots (you must provide)
+## Screenshots
 
-The stores require real screenshots. Chrome accepts 1280×800 or 640×400;
-AMO accepts a variety of sizes. Capture these after loading the extension:
+Three 1280×800 screenshots are included in the repo and are ready to upload
+(Chrome accepts 1280×800 or 640×400; AMO accepts a variety of sizes):
 
-1. The popup open on a normal article page (shows "This page" view).
-2. The floating S button and the annotation toolbar on a page.
-3. A page with highlights, a comment, and a sticky mark.
-4. The pen tool in action.
-5. The Settings tab (toggles + support card).
+1. `store/Banner1.png`
+2. `store/Banner2.png`
+3. `store/Banner3.png`
+
+Optional extras to reach Chrome's five-image maximum: the Settings tab
+(toggles + support card) and the pen tool in action.
 
 ## Promotional assets (optional)
 
