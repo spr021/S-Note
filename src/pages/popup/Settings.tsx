@@ -4,6 +4,7 @@ import type { SNoteSettings } from "@src/shared/settings";
 interface SettingsPanelProps {
   settings: SNoteSettings;
   onChange: (patch: Partial<SNoteSettings>) => void;
+  onSupport: () => void;
 }
 
 interface SwitchRowProps {
@@ -37,7 +38,11 @@ function SwitchRow({ label, description, checked, onToggle }: SwitchRowProps) {
   );
 }
 
-const SettingsPanel = ({ settings, onChange }: SettingsPanelProps) => (
+const SettingsPanel = ({
+  settings,
+  onChange,
+  onSupport,
+}: SettingsPanelProps) => (
   <section className="settings" aria-label="Settings">
     <SwitchRow
       label="Toggle-layer button"
@@ -53,6 +58,18 @@ const SettingsPanel = ({ settings, onChange }: SettingsPanelProps) => (
         onChange({ theme: settings.theme === "dark" ? "light" : "dark" })
       }
     />
+    <div className="support-card">
+      <div className="setting-copy">
+        <strong>Support S Note</strong>
+        <span>
+          S Note is free and keeps your notes on your device. If it helps you,
+          you can buy me a coffee.
+        </span>
+      </div>
+      <button type="button" className="support-button" onClick={onSupport}>
+        ☕ Buy me a coffee
+      </button>
+    </div>
   </section>
 );
 

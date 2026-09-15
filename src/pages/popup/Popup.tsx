@@ -21,6 +21,7 @@ import {
   updateSettings,
   type SNoteSettings,
 } from "@src/shared/settings";
+import { openSupportPage } from "@src/shared/support";
 import SettingsPanel from "@pages/popup/Settings";
 
 interface ActivePage {
@@ -308,6 +309,7 @@ const Popup = () => {
           <SettingsPanel
             settings={settings}
             onChange={(patch) => void changeSettings(patch)}
+            onSupport={() => openSupportPage()}
           />
           {status && (
             <div className="status" role="status">
@@ -561,6 +563,16 @@ const Popup = () => {
           </section>
         </>
       )}
+
+      <footer className="support-footer">
+        <button
+          type="button"
+          className="support-link"
+          onClick={() => openSupportPage()}
+        >
+          ☕ Buy me a coffee
+        </button>
+      </footer>
     </main>
   );
 };

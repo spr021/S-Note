@@ -8,11 +8,13 @@ import {
 import Popup from "./Popup";
 import { STORAGE_KEY, type WebNote } from "@src/shared/notes";
 import { SETTINGS_KEY, type SNoteSettings } from "@src/shared/settings";
+import { SUPPORT_URL } from "@src/shared/support";
 
 describe("S Note popup", () => {
   test("saves and renders a page note for the active website", async () => {
     const values: Record<string, unknown> = {};
     const messages: unknown[] = [];
+    const createTab = jest.fn();
     const listeners: Array<
       (
         changes: Record<string, chrome.storage.StorageChange>,
@@ -24,6 +26,7 @@ describe("S Note popup", () => {
       value: {
         runtime: { lastError: undefined },
         tabs: {
+          create: createTab,
           query: (
             _query: unknown,
             callback: (tabs: chrome.tabs.Tab[]) => void
@@ -180,6 +183,13 @@ describe("S Note popup", () => {
       expect((values[SETTINGS_KEY] as SNoteSettings).theme).toBe("light")
     );
     expect(document.documentElement.dataset.theme).toBe("light");
+
+    const supportButtons = screen.getAllByRole("button", {
+      name: /buy me a coffee/i,
+    });
+    expect(supportButtons).toHaveLength(2);
+    fireEvent.click(supportButtons[0]);
+    expect(createTab).toHaveBeenCalledWith({ url: SUPPORT_URL });
   });
 
   test("surfaces a storage failure instead of hanging on loading", async () => {
