@@ -1284,7 +1284,7 @@ export async function startSNote(): Promise<void> {
   createUi();
   installListeners();
   updateLayerUi();
-  await renderAllNotes();
   settings = await loadSettings();
   applySettings();
+  await renderAllNotes();
 }
