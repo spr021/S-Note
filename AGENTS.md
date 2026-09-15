@@ -4,7 +4,7 @@ MV3 local-first Chrome extension. All notes live in `chrome.storage.local` under
 
 ## Commands
 
-- Setup: `yarn install --frozen-lockfile` (Node 18.12.0 per `.nvmrc`, Yarn 1.x).
+- Setup: `yarn install --frozen-lockfile` (Node 20.19.0 per `.nvmrc`, Yarn 1.x).
 - Verify: `yarn test --runInBand && yarn build` — same order as CI (`.github/workflows/build.yml`: `build:hmr` → `test` → `build`).
 - Single test: `yarn test <path> --runInBand`, e.g. `yarn test src/shared/notes --runInBand`.
 - Full build: `yarn build` = `tsc --noEmit` + both vite bundles + `utils/verify-extension-build.mjs` + `utils/verify-content-runtime.mjs`. Do not skip or reorder; the verify scripts fail the build if the content bundle isn't self-contained or the floating S doesn't render.
