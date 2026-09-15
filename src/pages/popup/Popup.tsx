@@ -309,7 +309,7 @@ const Popup = () => {
           <SettingsPanel
             settings={settings}
             onChange={(patch) => void changeSettings(patch)}
-            onSupport={() => openSupportPage()}
+            onSupport={() => void openSupportPage()}
           />
           {status && (
             <div className="status" role="status">
