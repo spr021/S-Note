@@ -254,7 +254,9 @@ function createUi(): void {
   shadow.appendChild(marksContainer);
 
   launcher = document.createElement("button");
-  launcher.className = "launcher";
+  // Start hidden so users who disabled the launcher never see it flash before
+  // the stored settings resolve; `applySettings` reveals it when appropriate.
+  launcher.className = "launcher hidden";
   launcher.dataset.action = "toggle-layer";
   launcher.title = "Unhide S Note annotations";
   launcher.setAttribute("aria-label", "Unhide S Note annotations");

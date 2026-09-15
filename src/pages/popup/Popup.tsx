@@ -88,7 +88,15 @@ const Popup = () => {
   const [working, setWorking] = useState(false);
   const [settings, setSettings] = useState<SNoteSettings>(DEFAULT_SETTINGS);
 
-  const reload = async () => setNotes(await getNotes());
+  const reload = async () => {
+    try {
+      setNotes(await getNotes());
+    } catch (error) {
+      setStatus(
+        error instanceof Error ? error.message : "Could not load notes"
+      );
+    }
+  };
 
   useEffect(() => {
     void Promise.all([activePage(), getNotes(), getSettings()])
@@ -309,7 +317,19 @@ const Popup = () => {
         </>
       ) : loading ? (
         <div className="empty">Loading notes…</div>
-      ) : !page?.supported && view === "page" ? (
+      ) : view === "page" && !page ? (
+        <>
+          <div className="empty">
+            <strong>Could not read the active page.</strong>
+            <span>Close and reopen the popup to try again.</span>
+          </div>
+          {status && (
+            <div className="status" role="status">
+              {status}
+            </div>
+          )}
+        </>
+      ) : view === "page" && page && !page.supported ? (
         <>
           <div className="empty">
             <strong>This page is protected by the browser.</strong>

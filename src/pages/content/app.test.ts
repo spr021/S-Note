@@ -370,5 +370,20 @@ describe("S Note content experience", () => {
     expect(
       shadow?.querySelector(".launcher")?.classList.contains("hidden")
     ).toBe(true);
+
+    storageListeners.forEach((listener) =>
+      listener(
+        {
+          [SETTINGS_KEY]: {
+            oldValue: undefined,
+            newValue: { showLauncher: true, theme: "dark" },
+          },
+        },
+        "sync"
+      )
+    );
+    expect(
+      shadow?.querySelector(".launcher")?.classList.contains("hidden")
+    ).toBe(true);
   });
 });
