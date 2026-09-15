@@ -1,3 +1,5 @@
+import { readStorage, writeStorage } from "./storage";
+
 export type NoteKind = "page" | "highlight" | "comment" | "mark" | "drawing";
 
 export type HighlightColor = "yellow" | "green" | "blue" | "pink";
@@ -63,32 +65,6 @@ export function createNoteId(): string {
   }
 
   return `snote-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
-
-function readStorage<T>(key: string): Promise<T | undefined> {
-  return new Promise((resolve, reject) => {
-    chrome.storage.local.get(key, (result) => {
-      const error = chrome.runtime.lastError;
-      if (error) {
-        reject(new Error(error.message));
-        return;
-      }
-      resolve(result[key] as T | undefined);
-    });
-  });
-}
-
-function writeStorage(values: Record<string, unknown>): Promise<void> {
-  return new Promise((resolve, reject) => {
-    chrome.storage.local.set(values, () => {
-      const error = chrome.runtime.lastError;
-      if (error) {
-        reject(new Error(error.message));
-        return;
-      }
-      resolve();
-    });
-  });
 }
 
 export async function getNotes(): Promise<WebNote[]> {

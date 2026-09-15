@@ -1,4 +1,5 @@
 import { STORAGE_KEY, type WebNote } from "@src/shared/notes";
+import { SETTINGS_KEY } from "@src/shared/settings";
 import { startSNote } from "./app";
 
 function flush(): Promise<void> {
@@ -354,5 +355,20 @@ describe("S Note content experience", () => {
     expect(
       document.documentElement.classList.contains("snote-layer-visible")
     ).toBe(false);
+
+    storageListeners.forEach((listener) =>
+      listener(
+        {
+          [SETTINGS_KEY]: {
+            oldValue: undefined,
+            newValue: { showLauncher: false, theme: "dark" },
+          },
+        },
+        "local"
+      )
+    );
+    expect(
+      shadow?.querySelector(".launcher")?.classList.contains("hidden")
+    ).toBe(true);
   });
 });

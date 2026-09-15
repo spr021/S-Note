@@ -7,6 +7,7 @@ import {
 } from "@testing-library/react";
 import Popup from "./Popup";
 import { STORAGE_KEY, type WebNote } from "@src/shared/notes";
+import { SETTINGS_KEY, type SNoteSettings } from "@src/shared/settings";
 
 describe("S Note popup", () => {
   test("saves and renders a page note for the active website", async () => {
@@ -149,5 +150,35 @@ describe("S Note popup", () => {
       expect(values[STORAGE_KEY] as WebNote[]).toHaveLength(0)
     );
     expect(screen.getByText("No notes here yet.")).not.toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
+    const launcherSwitch = screen.getByRole("switch", {
+      name: "Toggle-layer button",
+    });
+    expect(launcherSwitch.getAttribute("aria-checked")).toBe("true");
+
+    await act(async () => {
+      fireEvent.click(launcherSwitch);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    await waitFor(() =>
+      expect((values[SETTINGS_KEY] as SNoteSettings).showLauncher).toBe(false)
+    );
+    expect(
+      screen
+        .getByRole("switch", { name: "Toggle-layer button" })
+        .getAttribute("aria-checked")
+    ).toBe("false");
+
+    const themeSwitch = screen.getByRole("switch", { name: "Dark theme" });
+    expect(themeSwitch.getAttribute("aria-checked")).toBe("true");
+    await act(async () => {
+      fireEvent.click(themeSwitch);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    await waitFor(() =>
+      expect((values[SETTINGS_KEY] as SNoteSettings).theme).toBe("light")
+    );
+    expect(document.documentElement.dataset.theme).toBe("light");
   });
 });
