@@ -43,6 +43,8 @@ yarn build:release
 
 ## Chrome Web Store
 
+Field-by-field copy-paste reference: **`store/chrome-dashboard-fields.md`**.
+
 1. Open the [Developer Dashboard](https://chrome.google.com/webstore/devconsole).
 2. **New item** → upload `release/s-note-1.0.0-chrome.zip`.
 3. **Store listing** tab:
