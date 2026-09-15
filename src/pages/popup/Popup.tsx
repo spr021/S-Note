@@ -225,10 +225,7 @@ const Popup = () => {
     <main className="popup-shell">
       <header className="topbar">
         <div className="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 64 64" focusable="false">
-            <path d="M43.8 19.5C39.9 14 25.9 13.4 21 19.5c-5 6.5 1.5 10.3 11.1 12.6 9.6 2.4 15.1 6.4 11.5 13.9-3.8 7.9-19.9 7.8-24.8-.3" />
-            <circle cx="48.3" cy="15.8" r="2.8" />
-          </svg>
+          <img src="/icons/tabink-logo-128.png" alt="" />
         </div>
         <div className="brand-copy">
           <h1>S Note</h1>

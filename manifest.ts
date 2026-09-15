@@ -12,21 +12,21 @@ const manifest: chrome.runtime.ManifestV3 = {
   action: {
     default_popup: "src/pages/popup/index.html",
     default_icon: {
-      "16": "icons/sticky-note-16.png",
-      "24": "icons/sticky-note-24.png",
-      "32": "icons/sticky-note-32.png",
-      "48": "icons/sticky-note-48.png",
+      "16": "icons/tabink-16.png",
+      "24": "icons/tabink-24.png",
+      "32": "icons/tabink-32.png",
+      "48": "icons/tabink-48.png",
     },
   },
   icons: {
-    "16": "icons/sticky-note-16.png",
-    "24": "icons/sticky-note-24.png",
-    "32": "icons/sticky-note-32.png",
-    "48": "icons/sticky-note-48.png",
-    "64": "icons/sticky-note-64.png",
-    "128": "icons/sticky-note-128.png",
-    "256": "icons/sticky-note-256.png",
-    "512": "icons/sticky-note-512.png",
+    "16": "icons/tabink-16.png",
+    "24": "icons/tabink-24.png",
+    "32": "icons/tabink-32.png",
+    "48": "icons/tabink-48.png",
+    "64": "icons/tabink-64.png",
+    "128": "icons/tabink-128.png",
+    "256": "icons/tabink-256.png",
+    "512": "icons/tabink-512.png",
   },
   content_scripts: [
     {

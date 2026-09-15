@@ -37,11 +37,19 @@ interface DragState {
 
 let pageUrl = normalizePageUrl(location.href);
 const colorHex: Record<HighlightColor, string> = {
-  yellow: "#efb928",
-  green: "#43b45a",
-  blue: "#3498db",
-  pink: "#e45d98",
+  yellow: "#facc15",
+  green: "#22c55e",
+  blue: "#38bdf8",
+  pink: "#ec4899",
 };
+
+function extensionIcon(path: string): string {
+  try {
+    return chrome.runtime.getURL(path);
+  } catch {
+    return "";
+  }
+}
 
 let currentRange: Range | null = null;
 let currentPoint: PagePoint | null = null;
@@ -70,78 +78,84 @@ let marksContainer: HTMLDivElement;
 
 function styles(): string {
   return `
-    :host { all: initial; color-scheme: light; }
+    :host { all: initial; color-scheme: dark; }
     * { box-sizing: border-box; }
     button, textarea { font: inherit; }
     button { border: 0; color: inherit; cursor: pointer; }
     .launcher, .layer-toolbar, .quick-toolbar, .editor, .toast, .mode-hint, .annotation-mark {
       font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: #211c17; pointer-events: auto;
+      color: #f2ecff; pointer-events: auto;
     }
     .launcher {
-      position: fixed; right: 18px; bottom: 18px; z-index: 30; display: grid; width: 46px; height: 46px;
-      place-items: center; border: 1px solid rgba(255,255,255,.35); border-radius: 15px; color: white;
-      background: #27221d; box-shadow: 0 8px 28px rgba(31,25,20,.3); font: 700 22px/1 Georgia, serif;
-      transition: transform .15s ease, background .15s ease;
+      position: fixed; right: 18px; bottom: 18px; z-index: 30; display: grid; width: 48px; height: 48px;
+      place-items: center; border: 1px solid rgba(168,85,247,.5); border-radius: 16px; color: white;
+      background: radial-gradient(130% 130% at 25% 15%, rgba(124,58,237,.55), rgba(20,15,32,.96) 70%);
+      box-shadow: 0 10px 30px rgba(8,4,18,.55), 0 0 22px rgba(168,85,247,.35);
+      transition: transform .15s ease, box-shadow .15s ease;
     }
-    .launcher:hover, .launcher.active { background: #6f5125; transform: translateY(-2px); }
+    .launcher:hover, .launcher.active { transform: translateY(-2px); box-shadow: 0 12px 34px rgba(8,4,18,.6), 0 0 30px rgba(217,70,239,.5); }
+    .launcher-icon { width: 30px; height: 30px; object-fit: contain; filter: drop-shadow(0 0 6px rgba(168,85,247,.6)); }
     .launcher-count {
       position: absolute; right: -5px; top: -5px; display: grid; min-width: 19px; height: 19px; padding: 0 5px;
-      place-items: center; border: 2px solid white; border-radius: 99px; color: white; background: #e0563f;
+      place-items: center; border: 2px solid #171122; border-radius: 99px; color: white;
+      background: linear-gradient(135deg, #c026d3, #f97316); box-shadow: 0 0 10px rgba(236,72,153,.6);
       font: 700 10px/1 sans-serif;
     }
     .layer-toolbar, .quick-toolbar, .editor, .toast, .mode-hint {
-      position: fixed; z-index: 40; border: 1px solid #ded7ca; background: #fffdf8;
-      box-shadow: 0 10px 35px rgba(45,34,20,.22);
+      position: fixed; z-index: 40; border: 1px solid rgba(168,85,247,.3); background: rgba(22,17,33,.97);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 16px 45px rgba(6,3,14,.6), 0 0 30px rgba(124,58,237,.22);
     }
     .layer-toolbar {
       display: none; left: 50%; top: 14px; align-items: center; gap: 3px; max-width: calc(100vw - 24px);
-      padding: 6px; border-radius: 14px; transform: translateX(-50%); overflow-x: auto;
+      padding: 6px; border-radius: 15px; transform: translateX(-50%); overflow-x: auto;
     }
     .layer-toolbar.visible { display: flex; }
     .layer-toolbar.minimized {
       left: auto; right: 76px; top: 18px; max-width: none; padding: 5px 6px 5px 9px;
-      border-radius: 12px; transform: none; overflow: hidden;
+      border-radius: 13px; transform: none; overflow: hidden;
     }
     .layer-toolbar.minimized > :not(.brand):not(.toolbar-size) { display: none; }
     .layer-toolbar.minimized .brand { padding: 0 5px 0 1px; }
-    .brand { padding: 0 8px 0 5px; font-family: Georgia, serif; font-size: 16px; font-weight: 700; white-space: nowrap; }
-    .divider { width: 1px; height: 27px; flex: 0 0 auto; margin: 0 3px; background: #ddd4c8; }
+    .brand { display: inline-flex; align-items: center; gap: 6px; padding: 0 8px 0 5px; font-size: 14px; font-weight: 750; letter-spacing: -.01em; white-space: nowrap; }
+    .brand-icon { width: 18px; height: 18px; object-fit: contain; filter: drop-shadow(0 0 5px rgba(168,85,247,.55)); }
+    .divider { width: 1px; height: 27px; flex: 0 0 auto; margin: 0 3px; background: rgba(139,92,246,.28); }
     .mode-button, .icon-button, .quick-button {
-      display: inline-flex; min-height: 34px; align-items: center; gap: 5px; padding: 7px 9px; border-radius: 8px;
-      background: transparent; white-space: nowrap;
+      display: inline-flex; min-height: 34px; align-items: center; gap: 5px; padding: 7px 9px; border-radius: 9px;
+      background: transparent; color: #cabde6; white-space: nowrap;
     }
-    .mode-button:hover, .mode-button.active, .icon-button:hover, .quick-button:hover { background: #eee7dc; }
-    .mode-button.active { color: #fff; background: #302922; }
-    .shortcut { color: #9a8e82; font-size: 9px; text-transform: uppercase; }
-    .mode-button.active .shortcut { color: #d8cec3; }
+    .mode-button:hover, .icon-button:hover, .quick-button:hover { background: rgba(139,92,246,.16); color: #f7f2ff; }
+    .mode-button.active { color: #fff; background: linear-gradient(135deg, #7c3aed, #c026d3); box-shadow: 0 4px 14px rgba(168,85,247,.4); }
+    .shortcut { color: #7f7496; font-size: 9px; text-transform: uppercase; }
+    .mode-button.active .shortcut { color: rgba(255,255,255,.72); }
     .swatches { display: flex; gap: 4px; padding: 0 3px; }
     .swatch {
-      width: 23px; height: 23px; padding: 0; border: 2px solid #fff; border-radius: 50%;
-      background: var(--color); box-shadow: 0 0 0 1px #c8beb1;
+      width: 23px; height: 23px; padding: 0; border: 2px solid rgba(255,255,255,.85); border-radius: 50%;
+      background: var(--color); box-shadow: 0 0 0 1px rgba(139,92,246,.4);
     }
-    .swatch.active { box-shadow: 0 0 0 2px #322a23; transform: scale(.92); }
+    .swatch.active { box-shadow: 0 0 0 2px #e9dcff, 0 0 12px var(--color); transform: scale(.92); }
     .quick-toolbar {
-      display: none; align-items: center; gap: 3px; padding: 5px; border-radius: 12px; transform: translate(-50%, -100%);
+      display: none; align-items: center; gap: 3px; padding: 5px; border-radius: 13px; transform: translate(-50%, -100%);
     }
     .quick-toolbar.visible { display: flex; }
     .quick-button { font-weight: 650; }
-    .editor { display: none; width: min(350px, calc(100vw - 24px)); padding: 12px; border-radius: 13px; }
+    .editor { display: none; width: min(350px, calc(100vw - 24px)); padding: 13px; border-radius: 15px; }
     .editor.visible { display: block; }
-    .editor-title { margin: 0 0 8px; font-size: 13px; font-weight: 750; }
-    .quote { margin: 0 0 9px; padding: 8px 10px; max-height: 80px; overflow: auto; border-left: 3px solid #efb928; background: #fff5c8; color: #594d3e; font: 12px/1.4 Georgia, serif; }
-    textarea { width: 100%; min-height: 92px; resize: vertical; padding: 9px; border: 1px solid #d8d0c5; border-radius: 8px; color: #201c18; background: white; line-height: 1.45; }
-    textarea:focus { border-color: #755d35; outline: 2px solid #eadfca; }
+    .editor-title { margin: 0 0 8px; font-size: 13px; font-weight: 750; color: #f4efff; }
+    .quote { margin: 0 0 9px; padding: 8px 10px; max-height: 80px; overflow: auto; border-left: 3px solid #d946ef; border-radius: 0 7px 7px 0; background: rgba(168,85,247,.13); color: #ded2f4; font: 12px/1.4 Georgia, serif; }
+    textarea { width: 100%; min-height: 92px; resize: vertical; padding: 10px; border: 1px solid rgba(139,92,246,.3); border-radius: 10px; color: #f2ecff; background: rgba(12,8,20,.6); line-height: 1.45; }
+    textarea::placeholder { color: #7f7496; }
+    textarea:focus { border-color: #a855f7; outline: 2px solid rgba(168,85,247,.3); }
     .actions { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; }
     .actions-group { display: flex; gap: 5px; }
-    .actions button { padding: 7px 10px; border-radius: 8px; background: transparent; }
-    .actions button:hover { background: #f0ebe2; }
-    .actions .primary { color: white; background: #26211c; font-weight: 650; }
-    .actions .primary:hover { background: #443a31; }
-    .actions .danger { color: #a62d2d; }
-    .toast { display: none; left: 50%; bottom: 24px; padding: 9px 13px; border-radius: 10px; transform: translateX(-50%); }
+    .actions button { padding: 7px 11px; border-radius: 9px; background: transparent; color: #cabde6; }
+    .actions button:hover { background: rgba(139,92,246,.16); color: #f7f2ff; }
+    .actions .primary { color: white; background: linear-gradient(135deg, #7c3aed, #c026d3 65%, #ec4899); font-weight: 650; box-shadow: 0 4px 14px rgba(168,85,247,.35); }
+    .actions .primary:hover { filter: brightness(1.12); }
+    .actions .danger { color: #ff8fa8; }
+    .toast { display: none; left: 50%; bottom: 24px; padding: 10px 14px; border-radius: 11px; transform: translateX(-50%); }
     .toast.visible { display: block; animation: snote-in .15s ease-out; }
-    .mode-hint { display: none; left: 50%; bottom: 24px; padding: 7px 11px; border-radius: 999px; color: #675b4e; transform: translateX(-50%); }
+    .mode-hint { display: none; left: 50%; bottom: 24px; padding: 7px 12px; border-radius: 999px; color: #c9bce6; transform: translateX(-50%); }
     .mode-hint.visible { display: block; }
     .mark-capture { position: fixed; inset: 0; z-index: 5; display: none; pointer-events: none; cursor: crosshair; }
     .mark-capture.active { display: block; pointer-events: auto; }
@@ -149,12 +163,12 @@ function styles(): string {
     .drawing-svg.draw { pointer-events: auto; cursor: crosshair; touch-action: none; }
     .drawing-svg.erase path[data-snote-id] { pointer-events: stroke; cursor: not-allowed; }
     .marks { position: fixed; inset: 0; z-index: 8; pointer-events: none; }
-    .lock-wash { position: fixed; inset: 0; z-index: 4; display: none; border: 3px solid rgba(239,185,40,.4); background: rgba(255,248,225,.045); pointer-events: none; }
+    .lock-wash { position: fixed; inset: 0; z-index: 4; display: none; border: 3px solid rgba(168,85,247,.4); background: rgba(124,58,237,.045); pointer-events: none; }
     .lock-wash.visible { display: block; }
     .drawing-svg:not(.annotations-visible) path[data-snote-id], .marks:not(.annotations-visible) .annotation-mark { display: none; }
     .annotation-mark {
-      position: absolute; width: 188px; min-height: 70px; padding: 0; overflow: hidden; border: 1px solid rgba(111,82,30,.28);
-      border-radius: 9px; background: #fff0a8; box-shadow: 0 7px 22px rgba(50,38,17,.22); text-align: left;
+      position: absolute; width: 188px; min-height: 70px; padding: 0; overflow: hidden; border: 1px solid rgba(168,85,247,.45);
+      border-radius: 10px; background: #fff0a8; box-shadow: 0 10px 28px rgba(50,38,17,.3), 0 0 18px rgba(168,85,247,.25); text-align: left;
       pointer-events: auto;
     }
     .annotation-mark[data-color="green"] { background: #c9f2ce; }
@@ -164,7 +178,7 @@ function styles(): string {
     .mark-handle { padding: 0 3px; cursor: grab; font-size: 15px; letter-spacing: -3px; }
     .mark-text { padding: 9px 10px 11px; color: #332a1f; font-size: 12px; line-height: 1.42; white-space: pre-wrap; }
     .marks.disabled .annotation-mark { pointer-events: none; }
-    .annotation-mark:hover { outline: 2px solid rgba(82,59,22,.32); }
+    .annotation-mark:hover { outline: 2px solid rgba(168,85,247,.55); }
     .annotation-mark.erase { cursor: not-allowed; }
     @keyframes snote-in { from { opacity: 0; transform: translate(-50%, 5px); } }
     @media (max-width: 720px) {
@@ -235,15 +249,21 @@ function createUi(): void {
   launcher.dataset.action = "toggle-layer";
   launcher.title = "Unhide S Note annotations";
   launcher.setAttribute("aria-label", "Unhide S Note annotations");
-  launcher.innerHTML = `S<span class="launcher-count">0</span>`;
+  const launcherIcon = extensionIcon("icons/tabink-logo-64.png");
+  launcher.innerHTML = launcherIcon
+    ? `<img class="launcher-icon" src="${launcherIcon}" alt="" /><span class="launcher-count">0</span>`
+    : `S<span class="launcher-count">0</span>`;
   shadow.appendChild(launcher);
 
   layerToolbar = document.createElement("div");
   layerToolbar.className = "layer-toolbar";
   layerToolbar.setAttribute("role", "toolbar");
   layerToolbar.setAttribute("aria-label", "S Note annotation tools");
+  const brandIcon = extensionIcon("icons/tabink-logo-64.png");
   layerToolbar.innerHTML = `
-    <span class="brand">S Note</span>
+    <span class="brand">${
+      brandIcon ? `<img class="brand-icon" src="${brandIcon}" alt="" />` : ""
+    }S Note</span>
     ${modeButton("select", "⌁", "Select text", "V")}
     ${modeButton("highlight", "▰", "Highlight", "H")}
     ${modeButton("comment", "▤", "Comment", "C")}

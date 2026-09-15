@@ -1,6 +1,21 @@
 :root {
-  color: #211c17;
-  background: #f7f3eb;
+  color: #f4efff;
+  background-color: #15101f;
+  background-image: radial-gradient(
+      120% 90% at 12% -10%,
+      rgba(124, 58, 237, 0.28),
+      transparent 58%
+    ),
+    radial-gradient(
+      90% 70% at 100% 0%,
+      rgba(236, 72, 153, 0.16),
+      transparent 55%
+    ),
+    radial-gradient(
+      120% 90% at 85% 115%,
+      rgba(251, 146, 60, 0.14),
+      transparent 60%
+    );
   font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
   font-synthesis: none;
@@ -30,30 +45,26 @@ button {
 }
 .brand-mark {
   display: grid;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   flex: 0 0 auto;
   place-items: center;
-  border-radius: 10px;
-  color: #fff;
-  background: #2c2722;
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 11px;
+  background: radial-gradient(
+      130% 130% at 25% 15%,
+      rgba(124, 58, 237, 0.5),
+      transparent 65%
+    ),
+    #1c1530;
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.32),
+    inset 0 0 12px rgba(236, 72, 153, 0.14);
 }
 
-.brand-mark svg {
-  width: 100%;
-  height: 100%;
-}
-
-.brand-mark path {
-  fill: none;
-  stroke: #f8f3ea;
-  stroke-width: 6.75;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.brand-mark circle {
-  fill: #9a7242;
+.brand-mark img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
 }
 .brand-copy {
   min-width: 0;
@@ -63,22 +74,29 @@ button {
   margin: 0;
   font-size: 16px;
   line-height: 1.2;
+  letter-spacing: -0.01em;
+  background: linear-gradient(100deg, #f4efff, #e9b8ff 55%, #ffc08a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 .brand-copy p {
   margin: 2px 0 0;
   overflow: hidden;
-  color: #7a7065;
+  color: #9387ad;
   font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .note-count {
   min-width: 26px;
-  padding: 4px 7px;
+  padding: 4px 8px;
+  border: 1px solid rgba(168, 85, 247, 0.28);
   border-radius: 999px;
-  color: #6a5d50;
-  background: #ebe4d8;
+  color: #dcc8ff;
+  background: rgba(124, 58, 237, 0.18);
   font-size: 11px;
+  font-weight: 600;
   text-align: center;
 }
 
@@ -86,34 +104,49 @@ button {
   display: flex;
   gap: 4px;
   padding: 0 15px 10px;
-  border-bottom: 1px solid #e0d9ce;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.16);
 }
 .tabs button {
-  padding: 6px 10px;
+  padding: 6px 11px;
   border: 0;
-  border-radius: 7px;
-  color: #766b60;
+  border-radius: 8px;
+  color: #9d90b8;
   background: transparent;
+  font-size: 12px;
 }
 .tabs button:hover {
-  background: #eee8de;
+  color: #e7dcff;
+  background: rgba(139, 92, 246, 0.12);
 }
 .tabs button.active {
-  color: #211c17;
-  background: #e5ded2;
+  color: #fbf7ff;
+  background: linear-gradient(
+    135deg,
+    rgba(124, 58, 237, 0.85),
+    rgba(192, 38, 211, 0.75)
+  );
+  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.32);
   font-weight: 650;
 }
 
 .layer-card {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 9px 12px;
   margin: 12px 12px 0;
-  padding: 11px;
-  border: 1px solid #cfc2af;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #fff8db, #f4eadc);
-  box-shadow: 0 3px 12px rgba(44, 34, 23, 0.06);
+  padding: 12px;
+  border: 1px solid rgba(168, 85, 247, 0.24);
+  border-radius: 14px;
+  background: linear-gradient(
+      150deg,
+      rgba(124, 58, 237, 0.16),
+      rgba(236, 72, 153, 0.08) 55%,
+      rgba(251, 146, 60, 0.08)
+    ),
+    #1c1630;
+  box-shadow: 0 10px 26px rgba(10, 6, 20, 0.5),
+    inset 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .layer-card > div:first-child {
@@ -125,26 +158,28 @@ button {
 
 .layer-card strong {
   font-size: 13px;
+  color: #f4efff;
 }
 
 .layer-card span {
-  color: #756858;
+  color: #9d90b8;
   font-size: 10px;
 }
 
 .layer-toggle {
   align-self: center;
-  padding: 7px 11px;
+  padding: 7px 12px;
   border: 0;
-  border-radius: 8px;
-  color: white;
-  background: #2c261f;
+  border-radius: 9px;
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed, #c026d3 60%, #ec4899);
+  box-shadow: 0 6px 16px rgba(168, 85, 247, 0.35);
   font-size: 11px;
   font-weight: 700;
 }
 
 .layer-toggle:hover {
-  background: #514233;
+  filter: brightness(1.12);
 }
 
 .layer-toggle:disabled,
@@ -154,53 +189,58 @@ button {
 }
 
 .layer-toggle.active {
-  color: #584c3e;
-  background: #e2d6c6;
+  color: #e9dcff;
+  background: rgba(139, 92, 246, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(168, 85, 247, 0.35);
 }
 
 .tool-launchers {
   display: flex !important;
   grid-column: 1 / -1;
   flex-direction: row !important;
-  gap: 4px !important;
+  gap: 5px !important;
 }
 
 .tool-launchers button {
   flex: 1;
-  padding: 6px 4px;
-  border: 1px solid rgba(99, 78, 50, 0.18);
-  border-radius: 7px;
-  color: #594b3c;
-  background: rgba(255, 255, 255, 0.5);
+  padding: 7px 4px;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 8px;
+  color: #c9bce6;
+  background: rgba(255, 255, 255, 0.03);
   font-size: 10px;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
 
 .tool-launchers button:hover {
-  background: white;
+  color: #fff;
+  border-color: rgba(217, 70, 239, 0.55);
+  background: rgba(168, 85, 247, 0.16);
 }
 
 .capture-card {
   margin: 12px 12px 4px;
   overflow: hidden;
-  border: 1px solid #d9d1c5;
-  border-radius: 12px;
-  background: #fffdf9;
-  box-shadow: 0 3px 12px rgba(44, 34, 23, 0.06);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 14px;
+  background: #1b1529;
+  box-shadow: 0 10px 26px rgba(10, 6, 20, 0.45),
+    inset 0 1px rgba(255, 255, 255, 0.03);
 }
 .capture-card textarea {
   display: block;
   width: 100%;
   min-height: 84px;
   resize: vertical;
-  padding: 11px 12px 4px;
+  padding: 12px 13px 4px;
   border: 0;
   outline: none;
-  color: #211c17;
+  color: #f2ecff;
   background: transparent;
   line-height: 1.45;
 }
 .capture-card textarea::placeholder {
-  color: #9b9187;
+  color: #7f7496;
 }
 .capture-actions {
   display: flex;
@@ -211,7 +251,7 @@ button {
 
 .save-hint {
   padding-left: 5px;
-  color: #9a8f83;
+  color: #776c90;
   font-size: 9px;
 }
 .selection-actions {
@@ -220,43 +260,48 @@ button {
 }
 .capture-actions button,
 .note-actions button {
-  padding: 6px 9px;
+  padding: 6px 10px;
   border: 0;
-  border-radius: 7px;
-  color: #5f554b;
+  border-radius: 8px;
+  color: #b6a9d2;
   background: transparent;
   font-size: 11px;
 }
 .capture-actions button:hover,
 .note-actions button:hover {
-  background: #eee8de;
+  color: #f4efff;
+  background: rgba(139, 92, 246, 0.14);
 }
 .capture-actions .save-button {
-  padding-inline: 12px;
-  color: white;
-  background: #27221d;
+  padding-inline: 13px;
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed, #c026d3 60%, #ec4899);
+  box-shadow: 0 5px 14px rgba(168, 85, 247, 0.32);
   font-weight: 650;
 }
 .capture-actions .save-button:hover {
-  background: #453c34;
+  filter: brightness(1.12);
 }
 .capture-actions .save-button:disabled {
   cursor: default;
   opacity: 0.35;
+  filter: none;
+  box-shadow: none;
 }
 .status {
   margin: 7px 14px 0;
-  color: #685b4d;
+  color: #a99cc4;
   font-size: 11px;
 }
 
 .layer-status {
   grid-column: 1 / -1;
   margin: 2px 0 0;
-  padding: 6px 8px;
-  border-radius: 6px;
-  color: #8a342e;
-  background: rgba(255, 255, 255, 0.58);
+  padding: 7px 9px;
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  border-radius: 8px;
+  color: #ffb4c4;
+  background: rgba(244, 63, 94, 0.12);
 }
 
 .notes {
@@ -269,6 +314,20 @@ button {
   padding: 10px 12px 14px;
 }
 
+.notes::-webkit-scrollbar {
+  width: 8px;
+}
+.notes::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: rgba(139, 92, 246, 0.35);
+  background-clip: padding-box;
+}
+.notes::-webkit-scrollbar-thumb:hover {
+  background: rgba(168, 85, 247, 0.55);
+  background-clip: padding-box;
+}
+
 .notes.grouped-notes {
   gap: 12px;
   min-height: 0;
@@ -279,9 +338,9 @@ button {
 .website-group {
   flex: 0 0 auto;
   overflow: hidden;
-  border: 1px solid #d9cdbc;
-  border-radius: 12px;
-  background: #eee7dc;
+  border: 1px solid rgba(139, 92, 246, 0.18);
+  border-radius: 13px;
+  background: rgba(27, 21, 41, 0.72);
 }
 
 .website-group-header {
@@ -289,9 +348,13 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 9px 10px;
-  border-bottom: 1px solid #ddd2c3;
-  background: #f2ece3;
+  padding: 9px 11px;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.16);
+  background: linear-gradient(
+    120deg,
+    rgba(124, 58, 237, 0.16),
+    rgba(236, 72, 153, 0.07)
+  );
 }
 
 .website-group-header > div {
@@ -303,29 +366,30 @@ button {
 
 .website-group-header strong {
   overflow: hidden;
-  color: #34291f;
+  color: #efe7ff;
   font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .website-group-header span {
-  color: #8a7c6d;
+  color: #8f83a9;
   font-size: 9px;
 }
 
 .delete-website {
   flex: 0 0 auto;
-  padding: 5px 7px;
+  padding: 5px 8px;
   border: 0;
-  border-radius: 6px;
-  color: #9b4037;
+  border-radius: 7px;
+  color: #ff8fa8;
   background: transparent;
   font-size: 9px;
 }
 
 .delete-website:hover {
-  background: #fff7f3;
+  color: #ffd0da;
+  background: rgba(244, 63, 94, 0.14);
 }
 
 .website-group-notes {
@@ -336,19 +400,24 @@ button {
 }
 
 .website-group-notes .note-card {
-  border-color: rgba(102, 80, 52, 0.14);
+  border-color: rgba(139, 92, 246, 0.14);
 }
 
 .note-card {
   padding: 10px 11px 8px;
-  border: 1px solid #e0d9ce;
-  border-radius: 10px;
-  background: #fffdf9;
+  border: 1px solid rgba(139, 92, 246, 0.16);
+  border-radius: 11px;
+  background: rgba(32, 25, 48, 0.72);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.02);
 }
 
 .note-card.comment {
-  border-left: 4px solid #6f5125;
-  background: #fffaf1;
+  border-left: 4px solid #a855f7;
+  background: linear-gradient(
+    100deg,
+    rgba(168, 85, 247, 0.14),
+    rgba(32, 25, 48, 0.72) 45%
+  );
 }
 
 .note-card.comment .note-meta::before {
@@ -359,7 +428,7 @@ button {
   place-items: center;
   border-radius: 5px;
   color: white;
-  background: #6f5125;
+  background: linear-gradient(135deg, #7c3aed, #ec4899);
   font-size: 10px;
 }
 
@@ -370,64 +439,70 @@ button {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #7a7065;
+  color: #9a8db6;
   font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
 .note-meta time {
   margin-left: auto;
   text-transform: none;
   letter-spacing: 0;
+  color: #7f7496;
 }
 .kind-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #aaa;
+  background: #6b6183;
 }
 .kind-dot.yellow {
-  background: #f0ca34;
+  background: #fbbf24;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.7);
 }
 .kind-dot.green {
-  background: #55b86a;
+  background: #34d399;
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.7);
 }
 .kind-dot.blue {
-  background: #4eacec;
+  background: #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
 }
 .kind-dot.pink {
-  background: #e66a9d;
+  background: #ec4899;
+  box-shadow: 0 0 8px rgba(236, 72, 153, 0.7);
 }
 .kind-dot.plain {
-  background: #786550;
+  background: #8b7fa8;
 }
 .page-title {
   margin: 7px 0 0;
   overflow: hidden;
-  color: #8b8177;
+  color: #867aa1;
   font-size: 10px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .note-card blockquote {
   margin: 8px 0 0;
-  padding: 6px 8px;
-  border-left: 3px solid #e8bd39;
-  color: #665b50;
-  background: #fff8d7;
+  padding: 7px 9px;
+  border-left: 3px solid #d946ef;
+  border-radius: 0 6px 6px 0;
+  color: #d9cdf0;
+  background: rgba(168, 85, 247, 0.12);
   font-family: Georgia, serif;
   font-size: 12px;
   line-height: 1.42;
 }
 .note-text {
   margin: 8px 0 0;
-  color: #29231e;
+  color: #e9e2f8;
   font-size: 12px;
   line-height: 1.45;
   white-space: pre-wrap;
 }
 .note-text.muted {
-  color: #8b8177;
+  color: #867aa1;
   font-style: italic;
 }
 .note-actions {
@@ -437,7 +512,11 @@ button {
   margin-top: 5px;
 }
 .note-actions .delete-button {
-  color: #a3483f;
+  color: #ff8fa8;
+}
+.note-actions .delete-button:hover {
+  color: #ffd0da;
+  background: rgba(244, 63, 94, 0.14);
 }
 
 .empty {
@@ -448,12 +527,12 @@ button {
   flex-direction: column;
   gap: 7px;
   padding: 25px;
-  color: #8a8075;
+  color: #8b80a6;
   text-align: center;
   font-size: 12px;
 }
 .empty strong {
-  color: #50473f;
+  color: #d7cbe9;
 }
 .empty.small {
   min-height: 110px;

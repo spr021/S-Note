@@ -37,8 +37,8 @@ const requiredFiles = [
   contentScript,
   "assets/js/page-messaging.js",
   "assets/css/contentStyle.chunk.css",
-  "icons/sticky-note-16.png",
-  "icons/sticky-note-32.png",
+  "icons/tabink-16.png",
+  "icons/tabink-32.png",
 ];
 
 for (const relativePath of requiredFiles) {
