@@ -10,36 +10,41 @@ import { STORAGE_KEY, type WebNote } from "@src/shared/notes";
 import { SETTINGS_KEY, type SNoteSettings } from "@src/shared/settings";
 import { SUPPORT_URL } from "@src/shared/support";
 
+type StorageListener = (
+  changes: Record<string, chrome.storage.StorageChange>,
+  area: string
+) => void;
+
+/**
+ * The chrome mock is installed once and mutated per test. Redefining
+ * `globalThis.chrome` between tests is unreliable on some Node/Jest versions,
+ * which previously made the second test reuse the first test's mock.
+ */
 describe("S Note popup", () => {
-  test("saves and renders a page note for the active website", async () => {
-    const values: Record<string, unknown> = {};
-    const messages: unknown[] = [];
-    const createTab = jest.fn((_properties: unknown, callback?: () => void) =>
-      callback?.()
-    );
-    const listeners: Array<
-      (
-        changes: Record<string, chrome.storage.StorageChange>,
-        area: string
-      ) => void
-    > = [];
+  const values: Record<string, unknown> = {};
+  const messages: unknown[] = [];
+  const listeners: StorageListener[] = [];
+  const createTab = jest.fn((_properties: unknown, callback?: () => void) =>
+    callback?.()
+  );
+  let lastError: { message: string } | undefined;
+  let activeTab: chrome.tabs.Tab[] = [];
+
+  beforeAll(() => {
     Object.defineProperty(globalThis, "chrome", {
       configurable: true,
       value: {
-        runtime: { lastError: undefined },
+        runtime: {
+          get lastError() {
+            return lastError;
+          },
+        },
         tabs: {
           create: createTab,
           query: (
             _query: unknown,
             callback: (tabs: chrome.tabs.Tab[]) => void
-          ) =>
-            callback([
-              {
-                id: 4,
-                url: "https://example.com/article#section",
-                title: "Example article",
-              } as chrome.tabs.Tab,
-            ]),
+          ) => callback(activeTab),
           sendMessage: (
             _id: number,
             message: { type?: string },
@@ -74,9 +79,9 @@ describe("S Note popup", () => {
             },
           },
           onChanged: {
-            addListener: (listener: typeof listeners[number]) =>
+            addListener: (listener: StorageListener) =>
               listeners.push(listener),
-            removeListener: (listener: typeof listeners[number]) => {
+            removeListener: (listener: StorageListener) => {
               const index = listeners.indexOf(listener);
               if (index >= 0) listeners.splice(index, 1);
             },
@@ -92,7 +97,23 @@ describe("S Note popup", () => {
       configurable: true,
       value: jest.fn(() => true),
     });
+  });
 
+  beforeEach(() => {
+    Object.keys(values).forEach((key) => delete values[key]);
+    messages.length = 0;
+    listeners.length = 0;
+    lastError = undefined;
+    activeTab = [
+      {
+        id: 4,
+        url: "https://example.com/article#section",
+        title: "Example article",
+      } as chrome.tabs.Tab,
+    ];
+  });
+
+  test("saves and renders a page note for the active website", async () => {
     render(<Popup />);
     await screen.findByText("Example article");
     expect(messages).toContainEqual({ type: "SNOTE_GET_LAYER_STATE" });
@@ -204,44 +225,14 @@ describe("S Note popup", () => {
   });
 
   test("surfaces a storage failure instead of hanging on loading", async () => {
-    Object.defineProperty(globalThis, "chrome", {
-      configurable: true,
-      value: {
-        runtime: { lastError: { message: "storage unavailable" } },
-        tabs: {
-          query: (
-            _query: unknown,
-            callback: (tabs: chrome.tabs.Tab[]) => void
-          ) =>
-            callback([
-              {
-                id: 4,
-                url: "https://example.com/",
-                title: "Example",
-              } as chrome.tabs.Tab,
-            ]),
-          sendMessage: (
-            _id: number,
-            _message: unknown,
-            callback: (response: unknown) => void
-          ) => callback({ ok: true, active: false, mode: "select", count: 0 }),
-        },
-        storage: {
-          local: {
-            get: (
-              _key: string,
-              callback: (result: Record<string, unknown>) => void
-            ) => callback({}),
-            set: (_values: Record<string, unknown>, callback: () => void) =>
-              callback(),
-          },
-          onChanged: {
-            addListener: () => undefined,
-            removeListener: () => undefined,
-          },
-        },
-      },
-    });
+    lastError = { message: "storage unavailable" };
+    activeTab = [
+      {
+        id: 4,
+        url: "https://example.com/",
+        title: "Example",
+      } as chrome.tabs.Tab,
+    ];
 
     render(<Popup />);
 
