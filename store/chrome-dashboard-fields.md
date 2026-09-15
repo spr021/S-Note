@@ -58,28 +58,44 @@ Paste one per permission. The manifest requests exactly these four.
 | `scripting`    | Injects the S Note annotation layer into the current page when the user opens it, and repairs tabs that were already open when the extension was installed or reloaded. |
 | `contextMenus` | Adds right-click actions to highlight or comment on the user's selected text.                                                                                           |
 
-> The content script matches `http://*/*` and `https://*/*`, so the listing will
-> warn that S Note can run on all websites. This is required for a page
-> annotation tool; the justification above covers it.
+### 2.3 Host permission justification (required)
 
-### 2.3 Remote code
+The content script declares `matches: ["http://*/*", "https://*/*"]`, so the
+dashboard lists those host patterns and **requires** a justification. Paste:
+
+> S Note is a page-annotation tool: users highlight text, attach comments, place
+> sticky notes, and draw directly on web pages. To do that, its content script
+> must run on the pages the user chooses to annotate so the annotation layer can
+> render, capture the user's text selection, and restore previously saved
+> annotations when the page is revisited. S Note does not read, collect, or
+> transmit page content or browsing history — every annotation is stored locally
+> in `chrome.storage.local` and never leaves the device. The `activeTab`
+> permission limits S Note to acting only after the user explicitly invokes it.
+
+> The listing will also warn that S Note can "read and change your data on all
+> websites." That is inherent to a page annotation tool; the justification above
+> explains the single purpose. If you want to avoid this warning entirely, the
+> content script would have to be removed and injection made on-demand only
+> (a behavior change, not part of this release).
+
+### 2.4 Remote code
 
 - Are you using remote code? → **No**
 
-### 2.4 Data usage
+### 2.5 Data usage
 
 - "What user data do you plan to collect?" → **select none** for every category
   (personally identifiable info, health, financial, authentication, personal
   communications, location, web history, user activity, website content).
 - S Note stores data only in `chrome.storage.local`; it never sends it anywhere.
 
-### 2.5 Certifications (tick all three)
+### 2.6 Certifications (tick all three)
 
 - I do not sell or transfer user data to third parties, apart from approved use cases.
 - I do not use or transfer user data for purposes unrelated to my item's single purpose.
 - I do not use or transfer user data to determine creditworthiness or for lending purposes.
 
-### 2.6 Privacy policy URL
+### 2.7 Privacy policy URL
 
 ```
 https://github.com/spr021/S-Note/blob/main/PRIVACY.md
