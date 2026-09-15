@@ -1,13 +1,54 @@
 import packageJson from "./package.json";
 
-const manifest: chrome.runtime.ManifestV3 = {
+const BACKGROUND_ENTRY = "src/pages/background/index.js";
+
+/**
+ * Cross-browser Manifest V3.
+ *
+ * Chrome runs `background.service_worker`; Firefox does not support extension
+ * service workers and runs `background.scripts` as an event page instead. Each
+ * browser ignores the key it does not use, so a single manifest ships to both
+ * stores. `browser_specific_settings` is required by addons.mozilla.org and is
+ * ignored by Chrome.
+ */
+type CrossBrowserManifest = chrome.runtime.ManifestV3 & {
+  background: {
+    service_worker: string;
+    scripts: string[];
+    type: "module";
+  };
+  browser_specific_settings: {
+    gecko: {
+      id: string;
+      strict_min_version: string;
+      // Required by addons.mozilla.org for new extensions. S Note collects no
+      // data and sends nothing to a server, so nothing is declared.
+      data_collection_permissions: {
+        required: string[];
+      };
+    };
+  };
+};
+
+const manifest: CrossBrowserManifest = {
   manifest_version: 3,
-  name: packageJson.name,
+  name: "S Note",
   version: packageJson.version,
   description: packageJson.description,
+  homepage_url: "https://github.com/spr021/S-Note",
   background: {
-    service_worker: "src/pages/background/index.js",
+    service_worker: BACKGROUND_ENTRY,
+    scripts: [BACKGROUND_ENTRY],
     type: "module",
+  },
+  browser_specific_settings: {
+    gecko: {
+      id: "s-note@saberpourrahimi.ir",
+      strict_min_version: "140.0",
+      data_collection_permissions: {
+        required: ["none"],
+      },
+    },
   },
   action: {
     default_popup: "src/pages/popup/index.html",

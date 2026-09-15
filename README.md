@@ -23,6 +23,21 @@ S Note is a local-first Chrome extension that adds a saved annotation layer on t
 - Selection toolbar and right-click context-menu actions
 - Data stored only in `chrome.storage.local`
 
+## Install
+
+S Note targets Chrome (Manifest V3) and Firefox (Manifest V3) from a single
+codebase. Store listings are in progress; until they are live you can build and
+load the extension yourself:
+
+```sh
+yarn install --frozen-lockfile
+yarn build:release
+```
+
+This produces `release/s-note-<version>-chrome.zip` and
+`release/s-note-<version>-firefox.zip`, plus unpacked `release/chrome` and
+`release/firefox` folders for local testing.
+
 ## Run locally
 
 Requirements: Node.js 16 or newer and Yarn 1.x.
