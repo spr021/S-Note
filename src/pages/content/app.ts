@@ -10,6 +10,13 @@ import {
   type PagePoint,
   type WebNote,
 } from "@src/shared/notes";
+import {
+  DEFAULT_SETTINGS,
+  getSettings,
+  settingsFromChange,
+  SETTINGS_KEY,
+  type SNoteSettings,
+} from "@src/shared/settings";
 import { anchorFromRange, rangeFromAnchor, wrapRange } from "./anchors";
 
 const HOST_ID = "snote-extension-root";
@@ -61,6 +68,7 @@ let layerActive = false;
 let layerMode: LayerMode = "select";
 let activeColor: HighlightColor = "yellow";
 let toolbarMinimized = false;
+let settings: SNoteSettings = DEFAULT_SETTINGS;
 
 let host: HTMLDivElement;
 let shadow: ShadowRoot;
@@ -94,6 +102,7 @@ function styles(): string {
       transition: transform .15s ease, box-shadow .15s ease;
     }
     .launcher:hover, .launcher.active { transform: translateY(-2px); box-shadow: 0 12px 34px rgba(8,4,18,.6), 0 0 30px rgba(217,70,239,.5); }
+    .launcher.hidden { display: none; }
     .launcher-icon { width: 30px; height: 30px; object-fit: contain; filter: drop-shadow(0 0 6px rgba(168,85,247,.6)); }
     .launcher-count {
       position: absolute; right: -5px; top: -5px; display: grid; min-width: 19px; height: 19px; padding: 0 5px;
@@ -245,7 +254,9 @@ function createUi(): void {
   shadow.appendChild(marksContainer);
 
   launcher = document.createElement("button");
-  launcher.className = "launcher";
+  // Start hidden so users who disabled the launcher never see it flash before
+  // the stored settings resolve; `applySettings` reveals it when appropriate.
+  launcher.className = "launcher hidden";
   launcher.dataset.action = "toggle-layer";
   launcher.title = "Unhide S Note annotations";
   launcher.setAttribute("aria-label", "Unhide S Note annotations");
@@ -411,6 +422,18 @@ function updateLayerUi(): void {
   };
   modeHint.textContent = hints[layerMode] ?? "";
   modeHint.classList.toggle("visible", layerActive && layerMode !== "select");
+}
+
+function applySettings(): void {
+  launcher.classList.toggle("hidden", !settings.showLauncher);
+}
+
+async function loadSettings(): Promise<SNoteSettings> {
+  try {
+    return await getSettings();
+  } catch {
+    return DEFAULT_SETTINGS;
+  }
 }
 
 function syncTextAnnotationVisibility(): void {
@@ -1206,7 +1229,12 @@ function installListeners(): void {
     { passive: true }
   );
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === "local" && changes[STORAGE_KEY]) void renderAllNotes();
+    if (area !== "local") return;
+    if (changes[STORAGE_KEY]) void renderAllNotes();
+    if (changes[SETTINGS_KEY]) {
+      settings = settingsFromChange(changes[SETTINGS_KEY]);
+      applySettings();
+    }
   });
   window.setInterval(() => {
     const nextUrl = normalizePageUrl(location.href);
@@ -1256,5 +1284,7 @@ export async function startSNote(): Promise<void> {
   createUi();
   installListeners();
   updateLayerUi();
+  settings = await loadSettings();
+  applySettings();
   await renderAllNotes();
 }

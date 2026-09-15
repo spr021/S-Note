@@ -13,6 +13,15 @@ import {
   type WebNote,
 } from "@src/shared/notes";
 import { sendToPage } from "@src/shared/page-messaging";
+import {
+  DEFAULT_SETTINGS,
+  getSettings,
+  settingsFromChange,
+  SETTINGS_KEY,
+  updateSettings,
+  type SNoteSettings,
+} from "@src/shared/settings";
+import SettingsPanel from "@pages/popup/Settings";
 
 interface ActivePage {
   tabId: number;
@@ -72,19 +81,29 @@ const Popup = () => {
   const [page, setPage] = useState<ActivePage | null>(null);
   const [notes, setNotes] = useState<WebNote[]>([]);
   const [draft, setDraft] = useState("");
-  const [view, setView] = useState<"page" | "all">("page");
+  const [view, setView] = useState<"page" | "all" | "settings">("page");
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
   const [layerOpen, setLayerOpen] = useState(false);
   const [working, setWorking] = useState(false);
+  const [settings, setSettings] = useState<SNoteSettings>(DEFAULT_SETTINGS);
 
-  const reload = async () => setNotes(await getNotes());
+  const reload = async () => {
+    try {
+      setNotes(await getNotes());
+    } catch (error) {
+      setStatus(
+        error instanceof Error ? error.message : "Could not load notes"
+      );
+    }
+  };
 
   useEffect(() => {
-    void Promise.all([activePage(), getNotes()]).then(
-      async ([active, stored]) => {
+    void Promise.all([activePage(), getNotes(), getSettings()])
+      .then(async ([active, stored, storedSettings]) => {
         setPage(active);
         setNotes(stored);
+        setSettings(storedSettings);
         if (active?.supported) {
           const { response: state, error } = await sendToPage<LayerState>(
             active.tabId,
@@ -96,18 +115,45 @@ const Popup = () => {
           if (!state?.ok && error)
             setStatus(`S Note could not attach to this page: ${error}`);
         }
-        setLoading(false);
-      }
-    );
+      })
+      .catch((error: unknown) => {
+        setStatus(
+          error instanceof Error ? error.message : "Could not load S Note"
+        );
+      })
+      .finally(() => setLoading(false));
     const listener = (
       changes: { [key: string]: chrome.storage.StorageChange },
       area: string
     ) => {
-      if (area === "local" && changes[STORAGE_KEY]) void reload();
+      if (area !== "local") return;
+      if (changes[STORAGE_KEY]) void reload();
+      if (changes[SETTINGS_KEY])
+        setSettings(settingsFromChange(changes[SETTINGS_KEY]));
     };
     chrome.storage.onChanged.addListener(listener);
     return () => chrome.storage.onChanged.removeListener(listener);
   }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = settings.theme;
+  }, [settings.theme]);
+
+  const changeSettings = async (patch: Partial<SNoteSettings>) => {
+    try {
+      setSettings(await updateSettings(patch));
+      setStatus("");
+    } catch (error) {
+      setStatus(
+        error instanceof Error ? error.message : "Could not save settings"
+      );
+    }
+  };
+
+  const switchView = (next: "page" | "all" | "settings") => {
+    setView(next);
+    setStatus("");
+  };
 
   const visibleNotes = useMemo(() => {
     if (view === "all") return notes;
@@ -239,25 +285,62 @@ const Popup = () => {
       <nav className="tabs" aria-label="Notes view">
         <button
           className={view === "page" ? "active" : ""}
-          onClick={() => setView("page")}
+          onClick={() => switchView("page")}
         >
           This page
         </button>
         <button
           className={view === "all" ? "active" : ""}
-          onClick={() => setView("all")}
+          onClick={() => switchView("all")}
         >
           All notes
         </button>
+        <button
+          className={view === "settings" ? "active" : ""}
+          onClick={() => switchView("settings")}
+        >
+          Settings
+        </button>
       </nav>
 
-      {loading ? (
+      {view === "settings" ? (
+        <>
+          <SettingsPanel
+            settings={settings}
+            onChange={(patch) => void changeSettings(patch)}
+          />
+          {status && (
+            <div className="status" role="status">
+              {status}
+            </div>
+          )}
+        </>
+      ) : loading ? (
         <div className="empty">Loading notes…</div>
-      ) : !page?.supported && view === "page" ? (
-        <div className="empty">
-          <strong>This page is protected by the browser.</strong>
-          <span>Open a regular http or https website to take notes.</span>
-        </div>
+      ) : view === "page" && !page ? (
+        <>
+          <div className="empty">
+            <strong>Could not read the active page.</strong>
+            <span>Close and reopen the popup to try again.</span>
+          </div>
+          {status && (
+            <div className="status" role="status">
+              {status}
+            </div>
+          )}
+        </>
+      ) : view === "page" && page && !page.supported ? (
+        <>
+          <div className="empty">
+            <strong>This page is protected by the browser.</strong>
+            <span>Open a regular http or https website to take notes.</span>
+          </div>
+          {status && (
+            <div className="status" role="status">
+              {status}
+            </div>
+          )}
+        </>
       ) : (
         <>
           {view === "page" && (

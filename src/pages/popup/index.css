@@ -3,8 +3,7 @@ body {
   min-height: 520px;
   max-height: 600px;
   margin: 0;
-  color-scheme: dark;
-  background-color: #15101f;
+  background-color: var(--sn-bg, #15101f);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

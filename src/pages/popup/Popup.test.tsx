@@ -7,6 +7,7 @@ import {
 } from "@testing-library/react";
 import Popup from "./Popup";
 import { STORAGE_KEY, type WebNote } from "@src/shared/notes";
+import { SETTINGS_KEY, type SNoteSettings } from "@src/shared/settings";
 
 describe("S Note popup", () => {
   test("saves and renders a page note for the active website", async () => {
@@ -149,5 +150,81 @@ describe("S Note popup", () => {
       expect(values[STORAGE_KEY] as WebNote[]).toHaveLength(0)
     );
     expect(screen.getByText("No notes here yet.")).not.toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
+    const launcherSwitch = screen.getByRole("switch", {
+      name: "Toggle-layer button",
+    });
+    expect(launcherSwitch.getAttribute("aria-checked")).toBe("true");
+
+    await act(async () => {
+      fireEvent.click(launcherSwitch);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    await waitFor(() =>
+      expect((values[SETTINGS_KEY] as SNoteSettings).showLauncher).toBe(false)
+    );
+    expect(
+      screen
+        .getByRole("switch", { name: "Toggle-layer button" })
+        .getAttribute("aria-checked")
+    ).toBe("false");
+
+    const themeSwitch = screen.getByRole("switch", { name: "Dark theme" });
+    expect(themeSwitch.getAttribute("aria-checked")).toBe("true");
+    await act(async () => {
+      fireEvent.click(themeSwitch);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    await waitFor(() =>
+      expect((values[SETTINGS_KEY] as SNoteSettings).theme).toBe("light")
+    );
+    expect(document.documentElement.dataset.theme).toBe("light");
+  });
+
+  test("surfaces a storage failure instead of hanging on loading", async () => {
+    Object.defineProperty(globalThis, "chrome", {
+      configurable: true,
+      value: {
+        runtime: { lastError: { message: "storage unavailable" } },
+        tabs: {
+          query: (
+            _query: unknown,
+            callback: (tabs: chrome.tabs.Tab[]) => void
+          ) =>
+            callback([
+              {
+                id: 4,
+                url: "https://example.com/",
+                title: "Example",
+              } as chrome.tabs.Tab,
+            ]),
+          sendMessage: (
+            _id: number,
+            _message: unknown,
+            callback: (response: unknown) => void
+          ) => callback({ ok: true, active: false, mode: "select", count: 0 }),
+        },
+        storage: {
+          local: {
+            get: (
+              _key: string,
+              callback: (result: Record<string, unknown>) => void
+            ) => callback({}),
+            set: (_values: Record<string, unknown>, callback: () => void) =>
+              callback(),
+          },
+          onChanged: {
+            addListener: () => undefined,
+            removeListener: () => undefined,
+          },
+        },
+      },
+    });
+
+    render(<Popup />);
+
+    expect(await screen.findByText("storage unavailable")).not.toBeNull();
+    expect(screen.queryByText("Loading notes…")).toBeNull();
   });
 });
