@@ -88,6 +88,12 @@ Text annotations store a DOM path for fast restoration and the selected quote wi
 
 S Note does not send notes or browsing content to a server. Notes remain in Chrome's local extension storage for the current browser profile. Removing the extension may remove that local data, depending on Chrome's extension-data handling.
 
+## Support
+
+S Note is free and stores everything locally. If it saves you time, you can
+buy me a coffee at <https://buymeacoffee.com/spr021>. Tips are entirely
+voluntary and go directly to the developer.
+
 ## License
 
 MIT

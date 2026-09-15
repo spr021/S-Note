@@ -8,11 +8,15 @@ import {
 import Popup from "./Popup";
 import { STORAGE_KEY, type WebNote } from "@src/shared/notes";
 import { SETTINGS_KEY, type SNoteSettings } from "@src/shared/settings";
+import { SUPPORT_URL } from "@src/shared/support";
 
 describe("S Note popup", () => {
   test("saves and renders a page note for the active website", async () => {
     const values: Record<string, unknown> = {};
     const messages: unknown[] = [];
+    const createTab = jest.fn((_properties: unknown, callback?: () => void) =>
+      callback?.()
+    );
     const listeners: Array<
       (
         changes: Record<string, chrome.storage.StorageChange>,
@@ -24,6 +28,7 @@ describe("S Note popup", () => {
       value: {
         runtime: { lastError: undefined },
         tabs: {
+          create: createTab,
           query: (
             _query: unknown,
             callback: (tabs: chrome.tabs.Tab[]) => void
@@ -91,6 +96,16 @@ describe("S Note popup", () => {
     render(<Popup />);
     await screen.findByText("Example article");
     expect(messages).toContainEqual({ type: "SNOTE_GET_LAYER_STATE" });
+
+    const footerSupport = screen.getByRole("button", {
+      name: "Buy me a coffee",
+    });
+    expect(footerSupport.className).toContain("support-link");
+    fireEvent.click(footerSupport);
+    expect(createTab).toHaveBeenCalledWith(
+      { url: SUPPORT_URL },
+      expect.any(Function)
+    );
 
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: "Unhide notes" }));
@@ -180,6 +195,12 @@ describe("S Note popup", () => {
       expect((values[SETTINGS_KEY] as SNoteSettings).theme).toBe("light")
     );
     expect(document.documentElement.dataset.theme).toBe("light");
+
+    const cardSupport = screen.getByRole("button", {
+      name: "Buy me a coffee",
+    });
+    expect(cardSupport.className).toContain("support-button");
+    expect(document.querySelector(".support-footer")).toBeNull();
   });
 
   test("surfaces a storage failure instead of hanging on loading", async () => {
@@ -226,5 +247,8 @@ describe("S Note popup", () => {
 
     expect(await screen.findByText("storage unavailable")).not.toBeNull();
     expect(screen.queryByText("Loading notes…")).toBeNull();
+    expect(
+      screen.getByRole("button", { name: "Buy me a coffee" })
+    ).not.toBeNull();
   });
 });
