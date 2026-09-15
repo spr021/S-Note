@@ -74,12 +74,14 @@ yarn build:release
 > The Firefox add-on ID is `s-note@saberpourrahimi.ir` in `manifest.ts`. It is
 > permanent after the first submission — change it now if you prefer another.
 
-## Tag the release (optional)
+## GitHub Release (done)
 
-Pushing a `v1.0.0` tag triggers `.github/workflows/release.yml`, which rebuilds
-both packages and attaches them to a GitHub Release:
+The `v1.0.0` tag triggered `.github/workflows/release.yml`, which rebuilt both
+packages and attached them to a GitHub Release:
 
-```sh
-git tag v1.0.0
-git push origin v1.0.0
-```
+- Release: https://github.com/spr021/S-Note/releases/tag/v1.0.0
+- Chrome: https://github.com/spr021/S-Note/releases/download/v1.0.0/s-note-1.0.0-chrome.zip
+- Firefox: https://github.com/spr021/S-Note/releases/download/v1.0.0/s-note-1.0.0-firefox.zip
+
+To publish a future version: bump `version` in `package.json`, then
+`git tag vX.Y.Z && git push origin vX.Y.Z`.
