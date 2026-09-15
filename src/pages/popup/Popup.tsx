@@ -91,8 +91,8 @@ const Popup = () => {
   const reload = async () => setNotes(await getNotes());
 
   useEffect(() => {
-    void Promise.all([activePage(), getNotes(), getSettings()]).then(
-      async ([active, stored, storedSettings]) => {
+    void Promise.all([activePage(), getNotes(), getSettings()])
+      .then(async ([active, stored, storedSettings]) => {
         setPage(active);
         setNotes(stored);
         setSettings(storedSettings);
@@ -107,9 +107,13 @@ const Popup = () => {
           if (!state?.ok && error)
             setStatus(`S Note could not attach to this page: ${error}`);
         }
-        setLoading(false);
-      }
-    );
+      })
+      .catch((error: unknown) => {
+        setStatus(
+          error instanceof Error ? error.message : "Could not load S Note"
+        );
+      })
+      .finally(() => setLoading(false));
     const listener = (
       changes: { [key: string]: chrome.storage.StorageChange },
       area: string
@@ -130,11 +134,17 @@ const Popup = () => {
   const changeSettings = async (patch: Partial<SNoteSettings>) => {
     try {
       setSettings(await updateSettings(patch));
+      setStatus("");
     } catch (error) {
       setStatus(
         error instanceof Error ? error.message : "Could not save settings"
       );
     }
+  };
+
+  const switchView = (next: "page" | "all" | "settings") => {
+    setView(next);
+    setStatus("");
   };
 
   const visibleNotes = useMemo(() => {
@@ -267,19 +277,19 @@ const Popup = () => {
       <nav className="tabs" aria-label="Notes view">
         <button
           className={view === "page" ? "active" : ""}
-          onClick={() => setView("page")}
+          onClick={() => switchView("page")}
         >
           This page
         </button>
         <button
           className={view === "all" ? "active" : ""}
-          onClick={() => setView("all")}
+          onClick={() => switchView("all")}
         >
           All notes
         </button>
         <button
           className={view === "settings" ? "active" : ""}
-          onClick={() => setView("settings")}
+          onClick={() => switchView("settings")}
         >
           Settings
         </button>
@@ -300,10 +310,17 @@ const Popup = () => {
       ) : loading ? (
         <div className="empty">Loading notes…</div>
       ) : !page?.supported && view === "page" ? (
-        <div className="empty">
-          <strong>This page is protected by the browser.</strong>
-          <span>Open a regular http or https website to take notes.</span>
-        </div>
+        <>
+          <div className="empty">
+            <strong>This page is protected by the browser.</strong>
+            <span>Open a regular http or https website to take notes.</span>
+          </div>
+          {status && (
+            <div className="status" role="status">
+              {status}
+            </div>
+          )}
+        </>
       ) : (
         <>
           {view === "page" && (

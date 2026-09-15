@@ -65,7 +65,7 @@
   --sn-quote-text: #d9cdf0;
   --sn-scroll: rgba(139, 92, 246, 0.35);
   --sn-scroll-hover: rgba(168, 85, 247, 0.55);
-  --sn-switch-off: rgba(255, 255, 255, 0.14);
+  --sn-switch-off: rgba(255, 255, 255, 0.2);
   --sn-switch-thumb: #ffffff;
 
   color: var(--sn-text);
@@ -148,7 +148,7 @@
   --sn-quote-text: #4c1d95;
   --sn-scroll: rgba(124, 58, 237, 0.3);
   --sn-scroll-hover: rgba(124, 58, 237, 0.5);
-  --sn-switch-off: rgba(76, 29, 149, 0.18);
+  --sn-switch-off: #8b83a3;
   --sn-switch-thumb: #ffffff;
 }
 

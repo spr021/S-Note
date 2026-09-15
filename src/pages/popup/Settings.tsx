@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { SNoteSettings } from "@src/shared/settings";
 
 interface SettingsPanelProps {
@@ -13,17 +14,20 @@ interface SwitchRowProps {
 }
 
 function SwitchRow({ label, description, checked, onToggle }: SwitchRowProps) {
+  const descriptionId = useId();
+
   return (
     <div className="setting-row">
       <div className="setting-copy">
         <strong>{label}</strong>
-        <span>{description}</span>
+        <span id={descriptionId}>{description}</span>
       </div>
       <button
         type="button"
         role="switch"
         aria-checked={checked}
         aria-label={label}
+        aria-describedby={descriptionId}
         className={checked ? "switch on" : "switch"}
         onClick={onToggle}
       >

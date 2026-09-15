@@ -1279,10 +1279,10 @@ function installListeners(): void {
 
 export async function startSNote(): Promise<void> {
   if (document.getElementById(HOST_ID) || !document.body) return;
-  settings = await loadSettings();
   createUi();
-  applySettings();
   installListeners();
   updateLayerUi();
   await renderAllNotes();
+  settings = await loadSettings();
+  applySettings();
 }

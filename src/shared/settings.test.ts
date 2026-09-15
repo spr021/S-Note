@@ -55,6 +55,18 @@ describe("settings storage", () => {
     expect(toggled).toEqual({ showLauncher: false, theme: "light" });
   });
 
+  test("serializes concurrent updates so no patch is lost", async () => {
+    await Promise.all([
+      updateSettings({ showLauncher: false }),
+      updateSettings({ theme: "light" }),
+    ]);
+
+    expect(await getSettings()).toEqual({
+      showLauncher: false,
+      theme: "light",
+    });
+  });
+
   test("reads settings out of a storage change event", () => {
     expect(
       settingsFromChange({
@@ -62,5 +74,10 @@ describe("settings storage", () => {
       } as chrome.storage.StorageChange)
     ).toEqual({ showLauncher: false, theme: "dark" });
     expect(settingsFromChange(undefined)).toEqual(DEFAULT_SETTINGS);
+    expect(
+      settingsFromChange({
+        newValue: undefined,
+      } as chrome.storage.StorageChange)
+    ).toEqual(DEFAULT_SETTINGS);
   });
 });

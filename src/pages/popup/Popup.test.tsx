@@ -181,4 +181,50 @@ describe("S Note popup", () => {
     );
     expect(document.documentElement.dataset.theme).toBe("light");
   });
+
+  test("surfaces a storage failure instead of hanging on loading", async () => {
+    Object.defineProperty(globalThis, "chrome", {
+      configurable: true,
+      value: {
+        runtime: { lastError: { message: "storage unavailable" } },
+        tabs: {
+          query: (
+            _query: unknown,
+            callback: (tabs: chrome.tabs.Tab[]) => void
+          ) =>
+            callback([
+              {
+                id: 4,
+                url: "https://example.com/",
+                title: "Example",
+              } as chrome.tabs.Tab,
+            ]),
+          sendMessage: (
+            _id: number,
+            _message: unknown,
+            callback: (response: unknown) => void
+          ) => callback({ ok: true, active: false, mode: "select", count: 0 }),
+        },
+        storage: {
+          local: {
+            get: (
+              _key: string,
+              callback: (result: Record<string, unknown>) => void
+            ) => callback({}),
+            set: (_values: Record<string, unknown>, callback: () => void) =>
+              callback(),
+          },
+          onChanged: {
+            addListener: () => undefined,
+            removeListener: () => undefined,
+          },
+        },
+      },
+    });
+
+    render(<Popup />);
+
+    expect(await screen.findByText("storage unavailable")).not.toBeNull();
+    expect(screen.queryByText("Loading notes…")).toBeNull();
+  });
 });

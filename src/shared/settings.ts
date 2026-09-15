@@ -11,10 +11,10 @@ export interface SNoteSettings {
 
 export const SETTINGS_KEY = "snote.settings.v1";
 
-export const DEFAULT_SETTINGS: SNoteSettings = {
+export const DEFAULT_SETTINGS: SNoteSettings = Object.freeze<SNoteSettings>({
   showLauncher: true,
   theme: "dark",
-};
+});
 
 /**
  * Coerces whatever is in storage (missing, partial, or written by an older
@@ -40,12 +40,30 @@ export async function getSettings(): Promise<SNoteSettings> {
   return normalizeSettings(await readStorage<unknown>(SETTINGS_KEY));
 }
 
-export async function updateSettings(
+/**
+ * `updateSettings` is a read-modify-write of the whole settings object, so two
+ * rapid toggles could otherwise read the same snapshot and clobber each other.
+ * A single promise queue serializes those updates.
+ */
+let settingsQueue: Promise<unknown> = Promise.resolve();
+
+function enqueueSettingsWrite<T>(task: () => Promise<T>): Promise<T> {
+  const result = settingsQueue.then(task, task);
+  settingsQueue = result.then(
+    () => undefined,
+    () => undefined
+  );
+  return result;
+}
+
+export function updateSettings(
   patch: Partial<SNoteSettings>
 ): Promise<SNoteSettings> {
-  const next = normalizeSettings({ ...(await getSettings()), ...patch });
-  await writeStorage({ [SETTINGS_KEY]: next });
-  return next;
+  return enqueueSettingsWrite(async () => {
+    const next = normalizeSettings({ ...(await getSettings()), ...patch });
+    await writeStorage({ [SETTINGS_KEY]: next });
+    return next;
+  });
 }
 
 /** Reads a settings value out of a `chrome.storage.onChanged` payload. */
