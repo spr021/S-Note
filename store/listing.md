@@ -77,6 +77,11 @@ Three 1280×800 screenshots are included in the repo and are ready to upload
 Optional extras to reach Chrome's five-image maximum: the Settings tab
 (toggles + support card) and the pen tool in action.
 
+> Policy note (Chrome "Red Nickel"): screenshots must not mimic ranking,
+> performance, or store status. Do not include star ratings, review counts, or
+> badges/text such as "free", "premium", "recommended", "#1", "new", or
+> "now available".
+
 ## Promotional assets (optional)
 
 - Chrome small promo tile: 440×280.
