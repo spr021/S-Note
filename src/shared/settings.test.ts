@@ -42,6 +42,10 @@ describe("settings storage", () => {
     expect(normalizeSettings({ showLauncher: "yes", theme: "neon" })).toEqual(
       DEFAULT_SETTINGS
     );
+    expect(normalizeSettings({ theme: "system" })).toEqual({
+      showLauncher: true,
+      theme: "system",
+    });
   });
 
   test("merges partial updates and persists the result", async () => {
@@ -72,7 +76,7 @@ describe("settings storage", () => {
       settingsFromChange({
         newValue: { showLauncher: false },
       } as chrome.storage.StorageChange)
-    ).toEqual({ showLauncher: false, theme: "dark" });
+    ).toEqual({ showLauncher: false, theme: "system" });
     expect(settingsFromChange(undefined)).toEqual(DEFAULT_SETTINGS);
     expect(
       settingsFromChange({
