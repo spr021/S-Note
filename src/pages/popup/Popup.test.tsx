@@ -4,11 +4,13 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import Popup from "./Popup";
 import { STORAGE_KEY, type WebNote } from "@src/shared/notes";
 import { SETTINGS_KEY, type SNoteSettings } from "@src/shared/settings";
 import { SUPPORT_URL } from "@src/shared/support";
+import { feedbackMailtoUrl } from "@src/shared/feedback";
 
 type StorageListener = (
   changes: Record<string, chrome.storage.StorageChange>,
@@ -236,6 +238,61 @@ describe("S Note popup", () => {
     });
     expect(cardSupport.className).toContain("support-button");
     expect(document.querySelector(".support-footer")).toBeNull();
+  });
+
+  test("opens the feedback dialog and sends a typed message", async () => {
+    const click = jest
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => undefined);
+    render(<Popup />);
+    await screen.findByText("Example article");
+
+    fireEvent.click(screen.getByRole("button", { name: "Send feedback" }));
+    const dialog = screen.getByRole("dialog", { name: "Send feedback" });
+
+    const sendButton = within(dialog).getByRole("button", {
+      name: "Send feedback",
+    });
+    expect((sendButton as HTMLButtonElement).disabled).toBe(true);
+
+    fireEvent.change(within(dialog).getByLabelText("Type of feedback"), {
+      target: { value: "Feature request" },
+    });
+    fireEvent.change(within(dialog).getByLabelText("Your message"), {
+      target: { value: "Please add tags." },
+    });
+    expect((sendButton as HTMLButtonElement).disabled).toBe(false);
+
+    await act(async () => {
+      fireEvent.click(sendButton);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    expect(click).toHaveBeenCalledTimes(1);
+    const anchor = click.mock.instances[0] as unknown as HTMLAnchorElement;
+    expect(anchor.getAttribute("href")).toBe(
+      feedbackMailtoUrl({
+        type: "Feature request",
+        message: "Please add tags.",
+      })
+    );
+    expect(screen.queryByRole("dialog")).toBeNull();
+
+    click.mockRestore();
+  });
+
+  test("opens feedback from settings and closes it with Escape", async () => {
+    render(<Popup />);
+    await screen.findByText("Example article");
+
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
+    fireEvent.click(screen.getByRole("button", { name: "Send feedback" }));
+    expect(
+      screen.getByRole("dialog", { name: "Send feedback" })
+    ).not.toBeNull();
+
+    fireEvent.keyDown(document, { key: "Escape" });
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
   });
 
   test("surfaces a storage failure instead of hanging on loading", async () => {
