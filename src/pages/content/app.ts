@@ -94,7 +94,6 @@ function styles(): string {
       --sn-ui-text-strong: #f7f2ff;
       --sn-ui-text-soft: #cabde6;
       --sn-ui-text-muted: #7f7496;
-      --sn-ui-accent: #a855f7;
       --sn-ui-panel-bg: rgba(22,17,33,.97);
       --sn-ui-panel-border: rgba(168,85,247,.3);
       --sn-ui-panel-shadow: 0 16px 45px rgba(6,3,14,.6), 0 0 30px rgba(124,58,237,.22);
@@ -131,7 +130,6 @@ function styles(): string {
       --sn-ui-text-strong: #241a3d;
       --sn-ui-text-soft: #5b4f78;
       --sn-ui-text-muted: #7d7395;
-      --sn-ui-accent: #7c3aed;
       --sn-ui-panel-bg: rgba(255,255,255,.97);
       --sn-ui-panel-border: rgba(124,58,237,.22);
       --sn-ui-panel-shadow: 0 16px 45px rgba(76,29,149,.16), 0 0 30px rgba(124,58,237,.12);
