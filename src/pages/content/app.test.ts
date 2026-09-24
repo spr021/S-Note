@@ -361,7 +361,7 @@ describe("S Note content experience", () => {
         {
           [SETTINGS_KEY]: {
             oldValue: undefined,
-            newValue: { showLauncher: false, theme: "dark" },
+            newValue: { showLauncher: false, theme: "light" },
           },
         },
         "local"
@@ -370,6 +370,20 @@ describe("S Note content experience", () => {
     expect(
       shadow?.querySelector(".launcher")?.classList.contains("hidden")
     ).toBe(true);
+    expect(host?.dataset.theme).toBe("light");
+
+    storageListeners.forEach((listener) =>
+      listener(
+        {
+          [SETTINGS_KEY]: {
+            oldValue: undefined,
+            newValue: { showLauncher: false, theme: "dark" },
+          },
+        },
+        "local"
+      )
+    );
+    expect(host?.dataset.theme).toBe("dark");
 
     storageListeners.forEach((listener) =>
       listener(

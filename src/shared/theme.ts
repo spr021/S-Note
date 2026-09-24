@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import type { ThemeMode } from "./settings";
 
 export type ResolvedTheme = "light" | "dark";
@@ -35,33 +34,24 @@ export function resolveTheme(mode: ThemeMode): ResolvedTheme {
 }
 
 /**
- * Resolves the effective theme for the given mode and keeps it in sync with
- * `prefers-color-scheme` while the popup is open. Only subscribes to OS changes
- * when the mode is `"system"`; explicit light/dark modes never change.
+ * Subscribes to OS colour-scheme changes and returns an unsubscribe function.
+ * This module intentionally avoids React so the content-script bundle can use
+ * it without pulling in a framework; the popup hook lives in `useTheme.ts`.
  */
-export function useResolvedTheme(mode: ThemeMode): ResolvedTheme {
-  const [theme, setTheme] = useState<ResolvedTheme>(() => resolveTheme(mode));
+export function subscribeSystemTheme(
+  listener: (theme: ResolvedTheme) => void
+): () => void {
+  const media = getMediaQuery();
+  if (!media) return () => undefined;
 
-  useEffect(() => {
-    setTheme(resolveTheme(mode));
-    if (mode !== "system") return;
-
-    const media = getMediaQuery();
-    if (!media) return;
-
-    const update = () => setTheme(media.matches ? "dark" : "light");
-    update();
-
-    if (media.addEventListener) {
-      media.addEventListener("change", update);
-      return () => media.removeEventListener?.("change", update);
-    }
-    // Fallback for environments without the modern MediaQueryList API.
-    media.addListener?.(update);
-    return () => media.removeListener?.(update);
-  }, [mode]);
-
-  return theme;
+  const update = () => listener(media.matches ? "dark" : "light");
+  if (media.addEventListener) {
+    media.addEventListener("change", update);
+    return () => media.removeEventListener?.("change", update);
+  }
+  // Fallback for environments without the modern MediaQueryList API.
+  media.addListener?.(update);
+  return () => media.removeListener?.(update);
 }
 
 /**

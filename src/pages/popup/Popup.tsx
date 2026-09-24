@@ -22,7 +22,7 @@ import {
   type SNoteSettings,
 } from "@src/shared/settings";
 import { openSupportPage } from "@src/shared/support";
-import { useResolvedTheme } from "@src/shared/theme";
+import { useResolvedTheme } from "@pages/popup/useTheme";
 import SettingsPanel from "@pages/popup/Settings";
 import FeedbackDialog from "@pages/popup/Feedback";
 

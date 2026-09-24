@@ -1,9 +1,8 @@
-import { act, renderHook } from "@testing-library/react";
 import {
   applyInitialTheme,
   resolveTheme,
+  subscribeSystemTheme,
   systemTheme,
-  useResolvedTheme,
   type ThemeMediaQuery,
 } from "./theme";
 
@@ -65,26 +64,23 @@ describe("theme resolution", () => {
     expect(resolveTheme("system")).toBe("light");
   });
 
-  test("re-resolves on OS changes and unsubscribes on unmount", () => {
+  test("notifies subscribers of OS changes and unsubscribes", () => {
     const media = installMatchMedia(true);
-    const { result, unmount } = renderHook(() => useResolvedTheme("system"));
+    const seen: string[] = [];
+    const unsubscribe = subscribeSystemTheme((theme) => seen.push(theme));
 
-    expect(result.current).toBe("dark");
     expect(media.listenerCount()).toBe(1);
+    media.setMatches(false);
+    expect(seen).toEqual(["light"]);
 
-    act(() => media.setMatches(false));
-    expect(result.current).toBe("light");
-
-    unmount();
+    unsubscribe();
     expect(media.listenerCount()).toBe(0);
   });
 
-  test("does not subscribe to OS changes for explicit modes", () => {
-    const media = installMatchMedia(false);
-    const { result } = renderHook(() => useResolvedTheme("dark"));
-
-    expect(result.current).toBe("dark");
-    expect(media.listenerCount()).toBe(0);
+  test("subscribe is a no-op when matchMedia is unavailable", () => {
+    const unsubscribe = subscribeSystemTheme(() => undefined);
+    expect(typeof unsubscribe).toBe("function");
+    expect(() => unsubscribe()).not.toThrow();
   });
 
   test("applies the initial OS theme to the document", () => {
