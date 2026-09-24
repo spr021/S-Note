@@ -22,7 +22,6 @@ import {
   type SNoteSettings,
 } from "@src/shared/settings";
 import { openSupportPage } from "@src/shared/support";
-import { useResolvedTheme } from "@src/shared/theme";
 import SettingsPanel from "@pages/popup/Settings";
 import FeedbackDialog from "@pages/popup/Feedback";
 
@@ -91,7 +90,6 @@ const Popup = () => {
   const [working, setWorking] = useState(false);
   const [settings, setSettings] = useState<SNoteSettings>(DEFAULT_SETTINGS);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const resolvedTheme = useResolvedTheme(settings.theme);
 
   const openFeedback = useCallback(() => setFeedbackOpen(true), []);
   const closeFeedback = useCallback(() => setFeedbackOpen(false), []);
@@ -144,8 +142,8 @@ const Popup = () => {
   }, []);
 
   useEffect(() => {
-    document.documentElement.dataset.theme = resolvedTheme;
-  }, [resolvedTheme]);
+    document.documentElement.dataset.theme = settings.theme;
+  }, [settings.theme]);
 
   const changeSettings = async (patch: Partial<SNoteSettings>) => {
     try {

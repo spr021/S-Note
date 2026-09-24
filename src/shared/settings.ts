@@ -1,13 +1,11 @@
 import { readStorage, writeStorage } from "./storage";
 
-export type ThemeMode = "light" | "dark" | "system";
-
-const THEME_MODES: readonly ThemeMode[] = ["light", "dark", "system"];
+export type ThemeMode = "light" | "dark";
 
 export interface SNoteSettings {
   /** Show the floating toggle-layer button on web pages. */
   showLauncher: boolean;
-  /** Colour scheme used by the S Note popup. `"system"` follows the OS. */
+  /** Colour scheme used by the S Note popup. */
   theme: ThemeMode;
 }
 
@@ -15,7 +13,7 @@ export const SETTINGS_KEY = "snote.settings.v1";
 
 export const DEFAULT_SETTINGS: SNoteSettings = Object.freeze<SNoteSettings>({
   showLauncher: true,
-  theme: "system",
+  theme: "dark",
 });
 
 /**
@@ -31,9 +29,10 @@ export function normalizeSettings(value: unknown): SNoteSettings {
       typeof record.showLauncher === "boolean"
         ? record.showLauncher
         : DEFAULT_SETTINGS.showLauncher,
-    theme: THEME_MODES.includes(record.theme as ThemeMode)
-      ? (record.theme as ThemeMode)
-      : DEFAULT_SETTINGS.theme,
+    theme:
+      record.theme === "light" || record.theme === "dark"
+        ? record.theme
+        : DEFAULT_SETTINGS.theme,
   };
 }
 
