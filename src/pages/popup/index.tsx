@@ -2,12 +2,9 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import "@pages/popup/index.css";
 import Popup from "@pages/popup/Popup";
-import { applyInitialTheme } from "@src/shared/theme";
 import refreshOnUpdate from "virtual:reload-on-update-in-view";
 
 refreshOnUpdate("pages/popup");
-
-applyInitialTheme();
 
 function init() {
   const appContainer = document.querySelector("#app-container");

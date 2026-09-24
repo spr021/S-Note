@@ -208,30 +208,16 @@ describe("S Note popup", () => {
         .getAttribute("aria-checked")
     ).toBe("false");
 
-    const systemRadio = screen.getByRole("radio", {
-      name: "System",
-    }) as HTMLInputElement;
-    expect(systemRadio.checked).toBe(true);
-
-    const lightRadio = screen.getByRole("radio", { name: "Light" });
+    const themeSwitch = screen.getByRole("switch", { name: "Dark theme" });
+    expect(themeSwitch.getAttribute("aria-checked")).toBe("true");
     await act(async () => {
-      fireEvent.click(lightRadio);
+      fireEvent.click(themeSwitch);
       await new Promise((resolve) => setTimeout(resolve, 0));
     });
     await waitFor(() =>
       expect((values[SETTINGS_KEY] as SNoteSettings).theme).toBe("light")
     );
     expect(document.documentElement.dataset.theme).toBe("light");
-
-    const darkRadio = screen.getByRole("radio", { name: "Dark" });
-    await act(async () => {
-      fireEvent.click(darkRadio);
-      await new Promise((resolve) => setTimeout(resolve, 0));
-    });
-    await waitFor(() =>
-      expect((values[SETTINGS_KEY] as SNoteSettings).theme).toBe("dark")
-    );
-    expect(document.documentElement.dataset.theme).toBe("dark");
 
     const cardSupport = screen.getByRole("button", {
       name: "Buy me a coffee",
