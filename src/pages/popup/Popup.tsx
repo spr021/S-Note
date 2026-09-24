@@ -22,6 +22,7 @@ import {
   type SNoteSettings,
 } from "@src/shared/settings";
 import { openSupportPage } from "@src/shared/support";
+import { useResolvedTheme } from "@src/shared/theme";
 import SettingsPanel from "@pages/popup/Settings";
 
 interface ActivePage {
@@ -88,6 +89,7 @@ const Popup = () => {
   const [layerOpen, setLayerOpen] = useState(false);
   const [working, setWorking] = useState(false);
   const [settings, setSettings] = useState<SNoteSettings>(DEFAULT_SETTINGS);
+  const resolvedTheme = useResolvedTheme(settings.theme);
 
   const reload = async () => {
     try {
@@ -137,8 +139,8 @@ const Popup = () => {
   }, []);
 
   useEffect(() => {
-    document.documentElement.dataset.theme = settings.theme;
-  }, [settings.theme]);
+    document.documentElement.dataset.theme = resolvedTheme;
+  }, [resolvedTheme]);
 
   const changeSettings = async (patch: Partial<SNoteSettings>) => {
     try {

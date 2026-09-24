@@ -1,5 +1,5 @@
 import { useId } from "react";
-import type { SNoteSettings } from "@src/shared/settings";
+import type { SNoteSettings, ThemeMode } from "@src/shared/settings";
 
 interface SettingsPanelProps {
   settings: SNoteSettings;
@@ -13,6 +13,12 @@ interface SwitchRowProps {
   checked: boolean;
   onToggle: () => void;
 }
+
+const THEME_OPTIONS: ReadonlyArray<{ value: ThemeMode; label: string }> = [
+  { value: "system", label: "System" },
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+];
 
 function SwitchRow({ label, description, checked, onToggle }: SwitchRowProps) {
   const descriptionId = useId();
@@ -38,6 +44,43 @@ function SwitchRow({ label, description, checked, onToggle }: SwitchRowProps) {
   );
 }
 
+interface ThemeRowProps {
+  value: ThemeMode;
+  onChange: (theme: ThemeMode) => void;
+}
+
+function ThemeRow({ value, onChange }: ThemeRowProps) {
+  const labelId = useId();
+
+  return (
+    <div className="setting-row theme-row">
+      <div className="setting-copy">
+        <strong id={labelId}>Appearance</strong>
+        <span>Match your device theme, or pick light or dark.</span>
+      </div>
+      <div className="theme-picker" role="radiogroup" aria-labelledby={labelId}>
+        {THEME_OPTIONS.map((option) => (
+          <label
+            key={option.value}
+            className={`theme-option${
+              value === option.value ? " selected" : ""
+            }`}
+          >
+            <input
+              type="radio"
+              name="snote-theme"
+              value={option.value}
+              checked={value === option.value}
+              onChange={() => onChange(option.value)}
+            />
+            <span>{option.label}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const SettingsPanel = ({
   settings,
   onChange,
@@ -50,13 +93,9 @@ const SettingsPanel = ({
       checked={settings.showLauncher}
       onToggle={() => onChange({ showLauncher: !settings.showLauncher })}
     />
-    <SwitchRow
-      label="Dark theme"
-      description="Use the dark appearance for the S Note popup."
-      checked={settings.theme === "dark"}
-      onToggle={() =>
-        onChange({ theme: settings.theme === "dark" ? "light" : "dark" })
-      }
+    <ThemeRow
+      value={settings.theme}
+      onChange={(theme) => onChange({ theme })}
     />
     <div className="support-card">
       <div className="setting-copy">

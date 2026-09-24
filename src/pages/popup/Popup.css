@@ -494,6 +494,66 @@ button {
   outline-offset: 2px;
 }
 
+.theme-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.theme-picker {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid var(--sn-border);
+  border-radius: 11px;
+  background: var(--sn-fill-faint);
+}
+
+.theme-option {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 8px;
+  border-radius: 8px;
+  color: var(--sn-text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.theme-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.theme-option:hover {
+  color: var(--sn-text-2);
+  background: var(--sn-hover);
+}
+
+.theme-option.selected {
+  color: #fbf7ff;
+  background: var(--sn-gradient);
+  box-shadow: var(--sn-accent-shadow);
+  font-weight: 650;
+}
+
+.theme-option input:focus-visible + span {
+  border-radius: 4px;
+  outline: 2px solid var(--sn-accent);
+  outline-offset: 3px;
+}
+
 .notes {
   display: flex;
   flex: 1;
