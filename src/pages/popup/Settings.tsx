@@ -5,6 +5,7 @@ interface SettingsPanelProps {
   settings: SNoteSettings;
   onChange: (patch: Partial<SNoteSettings>) => void;
   onSupport: () => void;
+  onFeedback: () => void;
 }
 
 interface SwitchRowProps {
@@ -42,6 +43,7 @@ const SettingsPanel = ({
   settings,
   onChange,
   onSupport,
+  onFeedback,
 }: SettingsPanelProps) => (
   <section className="settings" aria-label="Settings">
     <SwitchRow
@@ -58,6 +60,18 @@ const SettingsPanel = ({
         onChange({ theme: settings.theme === "dark" ? "light" : "dark" })
       }
     />
+    <div className="feedback-card">
+      <div className="setting-copy">
+        <strong>Send feedback</strong>
+        <span>
+          Found a bug or have an idea? Tell us what to improve — it opens your
+          email app with the details ready to send.
+        </span>
+      </div>
+      <button type="button" className="feedback-button" onClick={onFeedback}>
+        <span aria-hidden="true">✉</span> Send feedback
+      </button>
+    </div>
     <div className="support-card">
       <div className="setting-copy">
         <strong>Support S Note</strong>

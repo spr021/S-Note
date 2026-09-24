@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "@pages/popup/Popup.css";
 import {
   createNoteId,
@@ -23,6 +23,7 @@ import {
 } from "@src/shared/settings";
 import { openSupportPage } from "@src/shared/support";
 import SettingsPanel from "@pages/popup/Settings";
+import FeedbackDialog from "@pages/popup/Feedback";
 
 interface ActivePage {
   tabId: number;
@@ -88,6 +89,10 @@ const Popup = () => {
   const [layerOpen, setLayerOpen] = useState(false);
   const [working, setWorking] = useState(false);
   const [settings, setSettings] = useState<SNoteSettings>(DEFAULT_SETTINGS);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+
+  const openFeedback = useCallback(() => setFeedbackOpen(true), []);
+  const closeFeedback = useCallback(() => setFeedbackOpen(false), []);
 
   const reload = async () => {
     try {
@@ -310,6 +315,7 @@ const Popup = () => {
             settings={settings}
             onChange={(patch) => void changeSettings(patch)}
             onSupport={() => void openSupportPage()}
+            onFeedback={openFeedback}
           />
           {status && (
             <div className="status" role="status">
@@ -566,6 +572,9 @@ const Popup = () => {
 
       {view !== "settings" && (
         <footer className="support-footer">
+          <button type="button" className="support-link" onClick={openFeedback}>
+            <span aria-hidden="true">✉</span> Send feedback
+          </button>
           <button
             type="button"
             className="support-link"
@@ -575,6 +584,8 @@ const Popup = () => {
           </button>
         </footer>
       )}
+
+      {feedbackOpen && <FeedbackDialog onClose={closeFeedback} />}
     </main>
   );
 };
